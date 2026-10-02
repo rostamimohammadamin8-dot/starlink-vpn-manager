@@ -34,7 +34,8 @@ internal sealed class ProfileStore
 
         foreach (var profile in profiles)
         {
-            if (!Guid.TryParseExact(profile.Id, "N", out _)
+            if (profile is null
+                || !Guid.TryParseExact(profile.Id, "N", out _)
                 || !IsValidServiceName(profile.ServiceName)
                 || string.IsNullOrWhiteSpace(profile.Name))
             {
@@ -104,8 +105,9 @@ internal sealed class ProfileStore
     private string GetConfigurationPath(WireGuardProfile profile) =>
         Path.Combine(_directory, $"{profile.Id}.conf.dpapi");
 
-    private static bool IsValidServiceName(string serviceName) =>
-        serviceName.Length == 14
+    private static bool IsValidServiceName(string? serviceName) =>
+        serviceName is not null
+        && serviceName.Length == 14
         && serviceName.StartsWith("slvpn-", StringComparison.Ordinal)
         && serviceName[6..].All(Uri.IsHexDigit);
 }

@@ -55,36 +55,23 @@ internal sealed class WireGuardServiceManager
             return;
         }
 
-        if (state == TunnelState.NotInstalled)
+        var executable = RequireWireGuard();
+        var temporaryDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "StarlinkVpnManager",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(temporaryDirectory);
+        var temporaryPath = Path.Combine(temporaryDirectory, $"{profile.ServiceName}.conf");
+        try
         {
-            var executable = RequireWireGuard();
-            var temporaryDirectory = Path.Combine(
-                Path.GetTempPath(),
-                "StarlinkVpnManager",
-                Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(temporaryDirectory);
-            var temporaryPath = Path.Combine(temporaryDirectory, $"{profile.ServiceName}.conf");
-            try
-            {
-                await File.WriteAllBytesAsync(temporaryPath, configuration);
-                await RunElevatedAsync(executable, $"/installtunnelservice \"{temporaryPath}\"");
-            }
-            finally
-            {
-                if (File.Exists(temporaryPath))
-                {
-                    File.Delete(temporaryPath);
-                }
-
-                Directory.Delete(temporaryDirectory);
-            }
+            await File.WriteAllBytesAsync(temporaryPath, configuration);
+            await RunElevatedAsync(executable, $"/installtunnelservice \"{temporaryPath}\"");
+            await WaitForStateAsync(profile.ServiceName, TunnelState.Running);
         }
-        else
+        finally
         {
-            await RunElevatedAsync(_serviceControlPath, $"start \"WireGuardTunnel${profile.ServiceName}\"");
+            Directory.Delete(temporaryDirectory, recursive: true);
         }
-
-        await WaitForStateAsync(profile.ServiceName, TunnelState.Running);
     }
 
     public async Task DisconnectAsync(WireGuardProfile profile)

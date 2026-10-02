@@ -28,7 +28,7 @@
                            FontSize="14"
                            Margin="0,5,0,0" />
             </StackPanel>
-            <Border HorizontalAlignment="Left"
+            <Border HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Background="#17352F"
                     CornerRadius="12"
@@ -69,15 +69,15 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0" Margin="0,0,0,12">
+                <Button x:Name="ImportButton"
+                        Content="＋  افزودن پروفایل"
+                        Click="ImportButton_Click"
+                        DockPanel.Dock="Right"
+                        Margin="0" />
                 <TextBlock Text="پروفایل‌های شما"
                            FontSize="17"
                            FontWeight="SemiBold"
                            VerticalAlignment="Center" />
-                <Button x:Name="ImportButton"
-                        Content="＋  افزودن پروفایل"
-                        Click="ImportButton_Click"
-                        DockPanel.Dock="Left"
-                        Margin="0" />
             </DockPanel>
 
             <Border Grid.Row="1"

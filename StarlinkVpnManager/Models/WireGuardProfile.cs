@@ -35,12 +35,12 @@ public sealed class WireGuardProfile : INotifyPropertyChanged
         get => _statusDetails;
         set
         {
-        if (_statusDetails == value)
-        {
-            return;
+            if (_statusDetails == value)
+            {
+                return;
             }
 
-        _statusDetails = value;
+            _statusDetails = value;
             OnPropertyChanged();
         }
     }
