@@ -43,6 +43,13 @@ public sealed record NetworkDiagnosticsReport(
     int? PersistentKeepaliveSeconds,
     int? ConfiguredMtu)
 {
+    public IReadOnlyList<NetworkLatencyResult> TransportLatencies { get; init; } = [];
+
+    public int? StabilityScorePercentage => TransportLatencies.Count == 0
+        ? null
+        : (int)Math.Round(
+            TransportLatencies.Count(result => result.LatencyMs.HasValue) * 100d / TransportLatencies.Count);
+
     public IReadOnlyList<string> Recommendations => BuildRecommendations();
 
     private IReadOnlyList<string> BuildRecommendations()
@@ -93,6 +100,11 @@ public sealed record NetworkDiagnosticsReport(
             recommendations.Add("نوسان تأخیر مسیر اینترنت بالاست؛ در ساعات مختلف دوباره آزمایش کنید تا اثر ازدحام مشخص شود.");
         }
 
+        if (StabilityScorePercentage is { } stability && stability < 75)
+        {
+            recommendations.Add($"امتیاز پایداری آزمون‌های TCP/HTTP پایین است ({stability}%)؛ مسیر اینترنت یا دسترسی به مقصدها را دوباره بررسی کنید.");
+        }
+
         foreach (var endpoint in Endpoints.Where(endpoint => endpoint.Error is not null))
         {
             recommendations.Add($"نام میزبان سرور VPN یعنی «{endpoint.Host}» resolve نشد؛ DNS دستگاه یا نام سرور را بررسی کنید.");
@@ -121,3 +133,10 @@ public sealed record NetworkDiagnosticsReport(
         return recommendations;
     }
 }
+
+public sealed record NetworkLatencyResult(
+    string Name,
+    string Target,
+    string Protocol,
+    long? LatencyMs,
+    string? Error);
