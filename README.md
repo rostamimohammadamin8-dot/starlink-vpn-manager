@@ -3,7 +3,7 @@
 <p align="center">
   <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white">
   <img alt="Windows 11" src="https://img.shields.io/badge/Windows-11-0078D4?logo=windows11&logoColor=white">
-  <img alt="License not declared" src="https://img.shields.io/badge/license-not%20declared-lightgrey">
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
   <a href="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/actions/workflows/dotnet.yml"><img alt="Build" src="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/actions/workflows/dotnet.yml/badge.svg?branch=main"></a>
   <a href="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/actions/workflows/release.yml"><img alt="Automated Windows releases" src="https://img.shields.io/badge/releases-Windows%20x64-0078D4?logo=windows"></a>
   <a href="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/rostamimohammadamin8-dot/starlink-vpn-manager?style=flat"></a>
@@ -125,4 +125,4 @@ Pushing a version tag matching `v*` (for example, `v1.0.0`) triggers the Windows
 
 ## License
 
-No license has been declared in this repository yet. Until one is added, do not assume the source is available for reuse or redistribution.
+This project is licensed under the [MIT License](LICENSE). Copyright © 2026 Mohammad Amin Rostami.
