@@ -140,8 +140,7 @@ internal static class WireGuardConfiguration
             }
             else if (section.Equals("Peer", StringComparison.OrdinalIgnoreCase)
                      && key.Equals("Endpoint", StringComparison.OrdinalIgnoreCase)
-                     && TryGetEndpointHost(value, out var host)
-                     && !System.Net.IPAddress.TryParse(host, out _))
+                     && TryGetEndpointHost(value, out var host))
             {
                 endpointHosts.Add(host);
             }
