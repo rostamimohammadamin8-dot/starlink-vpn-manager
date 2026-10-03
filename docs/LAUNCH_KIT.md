@@ -60,14 +60,14 @@ I would value feedback from people familiar with Windows tunnel services and fir
 
 **Post:**
 
-Built a Windows VPN dashboard for WireGuard + sing-box:
+Announcing Starlink VPN Manager, now released as open-source software under the MIT License:
 
 • DPAPI-protected WireGuard profiles
 • TCP/HTTP/ICMP diagnostics
 • Configurable AI-domain routing
 • Optional Windows Firewall kill switch with rollback
 
-Starlink auto-failover and per-app split tunneling are on the roadmap—not shipped yet.
+Built with .NET 8 and WPF. Starlink auto-failover and per-app split tunneling are on the roadmap—not shipped yet.
 
 https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
 
@@ -75,10 +75,12 @@ https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
 
 **Post:**
 
-I’ve been developing Starlink VPN Manager, a .NET 8 WPF application for Windows users who manage WireGuard profiles and sing-box tunnels.
+I’m releasing Starlink VPN Manager as open-source software under the MIT License. It is a .NET 8 WPF application for Windows users who manage WireGuard profiles and sing-box tunnels.
 
 The dashboard combines current-user DPAPI profile storage, ICMP/TCP/HTTP network diagnostics, configurable AI-service domain routing, and an optional system-wide Windows Firewall kill switch. Firewall changes require explicit confirmation and administrator approval; previous local policy is saved for restoration.
 
-Automatic Starlink outage failover and per-application split tunneling are planned, but are not implemented in the current release. Project and technical details: https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
+Automatic Starlink outage failover and per-application split tunneling are planned, but are not implemented in the current release. The MIT terms are available in the repository's `LICENSE` file.
+
+Project and technical details: https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
 
 Feedback on the architecture, Windows networking edge cases, and roadmap priorities is welcome.
