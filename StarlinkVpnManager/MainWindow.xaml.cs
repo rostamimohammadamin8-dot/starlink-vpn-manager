@@ -53,6 +53,7 @@ public partial class MainWindow : Window
         catch (Exception ex) when (ex is IOException
                                    or UnauthorizedAccessException
                                    or CryptographicException
+                                   or InvalidOperationException
                                    or InvalidDataException
                                    or JsonException
                                    or Win32Exception)
