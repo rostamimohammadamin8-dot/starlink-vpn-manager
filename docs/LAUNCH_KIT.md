@@ -2,7 +2,7 @@
 
 Copy, adapt, and verify each draft before posting. Replace any wording that no longer matches the released version.
 
-> **License note:** The repository does not currently declare a software license. Until one is added, describe this as a public project/repository, not as open-source software, and do not invite reuse or redistribution. The project is not affiliated with SpaceX, Starlink, WireGuard, or the AI providers mentioned below.
+> **License:** Starlink VPN Manager is open-source software released under the MIT License. See the repository's `LICENSE` file for the terms. The project is not affiliated with SpaceX, Starlink, WireGuard, or the AI providers mentioned below.
 
 ## Reddit
 
@@ -12,7 +12,7 @@ Copy, adapt, and verify each draft before posting. Replace any wording that no l
 
 **Post:**
 
-I put together Starlink VPN Manager, a Windows 10/11 WPF app for managing WireGuard profiles and diagnosing connection quality.
+I put together Starlink VPN Manager, an open-source Windows 10/11 WPF app released under the MIT License, for managing WireGuard profiles and diagnosing connection quality.
 
 It runs on-demand ICMP, TCP, and HTTP latency checks, reports a transport-probe success score, and can launch sing-box with configurable routing rules for AI-service domains. There is also an optional Windows Firewall kill switch with an explicit UAC prompt and saved-policy restoration.
 
@@ -28,7 +28,7 @@ The firewall option is system-wide and deliberately opt-in. Please read the safe
 
 **Post:**
 
-I have been building a .NET 8/WPF Windows utility around WireGuard and sing-box. The current implementation includes:
+I have been building an open-source .NET 8/WPF Windows utility, released under the MIT License, around WireGuard and sing-box. The current implementation includes:
 
 - CommunityToolkit.Mvvm view model and command bindings
 - Async TCP-handshake, HTTP-response, ICMP, and DNS diagnostics
@@ -40,15 +40,13 @@ The firewall control affects outbound traffic system-wide, so it is disabled by 
 
 Repository: https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
 
-Note: the repository does not yet declare a license.
-
 ### r/WireGuard
 
 **Title:** Windows WireGuard profile manager with DPAPI storage and connection diagnostics
 
 **Post:**
 
-I built a Windows dashboard for importing and managing WireGuard `.conf` profiles. Imported profile contents are protected with current-user DPAPI, and the app can show tunnel service state plus peer handshake/transfer summaries when `wg.exe` is available.
+I built an open-source Windows dashboard, released under the MIT License, for importing and managing WireGuard `.conf` profiles. Imported profile contents are protected with current-user DPAPI, and the app can show tunnel service state plus peer handshake/transfer summaries when `wg.exe` is available.
 
 It also measures ICMP/TCP/HTTP latency to help diagnose ping drops. An optional Windows Firewall guard can block outbound traffic outside an identified tunnel interface and configured VPN endpoint addresses; enabling it requires confirmation and administrator approval, and the app saves/restores the previous local firewall settings.
 
@@ -62,14 +60,14 @@ I would value feedback from people familiar with Windows tunnel services and fir
 
 **Post:**
 
-Built a Windows VPN dashboard for WireGuard + sing-box:
+Announcing Starlink VPN Manager, now released as open-source software under the MIT License:
 
 • DPAPI-protected WireGuard profiles
 • TCP/HTTP/ICMP diagnostics
 • Configurable AI-domain routing
 • Optional Windows Firewall kill switch with rollback
 
-Starlink auto-failover and per-app split tunneling are on the roadmap—not shipped yet.
+Built with .NET 8 and WPF. Starlink auto-failover and per-app split tunneling are on the roadmap—not shipped yet.
 
 https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
 
@@ -77,11 +75,11 @@ https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
 
 **Post:**
 
-I’ve been developing Starlink VPN Manager, a .NET 8 WPF application for Windows users who manage WireGuard profiles and sing-box tunnels.
+I’m releasing Starlink VPN Manager as open-source software under the MIT License. It is a .NET 8 WPF application for Windows users who manage WireGuard profiles and sing-box tunnels.
 
 The dashboard combines current-user DPAPI profile storage, ICMP/TCP/HTTP network diagnostics, configurable AI-service domain routing, and an optional system-wide Windows Firewall kill switch. Firewall changes require explicit confirmation and administrator approval; previous local policy is saved for restoration.
 
-Automatic Starlink outage failover and per-application split tunneling are planned, but are not implemented in the current release. The repository also does not yet declare a license.
+Automatic Starlink outage failover and per-application split tunneling are planned, but are not implemented in the current release. The MIT terms are available in the repository's `LICENSE` file.
 
 Project and technical details: https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager
 
