@@ -4,20 +4,62 @@
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="WindowBackground" Color="#0B1220" />
-        <SolidColorBrush x:Key="PanelBackground" Color="#121D2E" />
-        <SolidColorBrush x:Key="PanelBorder" Color="#24344A" />
-        <SolidColorBrush x:Key="AccentBrush" Color="#48D6C3" />
+        <SolidColorBrush x:Key="PanelBackground" Color="#111C2C" />
+        <SolidColorBrush x:Key="PanelElevatedBackground" Color="#172437" />
+        <SolidColorBrush x:Key="PanelBorder" Color="#26384E" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#55E0CC" />
         <SolidColorBrush x:Key="TextBrush" Color="#F1F5F9" />
         <SolidColorBrush x:Key="MutedBrush" Color="#93A4B8" />
         <Style TargetType="Button">
             <Setter Property="Foreground" Value="#07131D" />
             <Setter Property="Background" Value="{StaticResource AccentBrush}" />
             <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="16,10" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Padding" Value="16,11" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="9"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.88" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.72" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#203247" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+        </Style>
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#482832" />
+            <Setter Property="Foreground" Value="#FFD6DC" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style TargetType="Expander">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="FontSize" Value="12" />
         </Style>
     </Application.Resources>
 </Application>

@@ -3,40 +3,42 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="مدیر VPN استارلینک"
         Height="900"
-        Width="1000"
+        Width="1180"
         MinHeight="720"
-        MinWidth="780"
+        MinWidth="900"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WindowBackground}"
         Foreground="{StaticResource TextBrush}"
         FlowDirection="RightToLeft"
         FontFamily="Segoe UI">
-    <Grid Margin="32">
+    <Grid Margin="28">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,28">
+        <Grid Grid.Row="0" Margin="0,0,0,22">
             <StackPanel>
-                <TextBlock Text="مدیر VPN استارلینک" FontSize="27" FontWeight="Bold" />
-                <TextBlock Text="پروفایل‌های WireGuard و تونل‌های sing-box را امن مدیریت کنید"
+                <TextBlock Text="مدیر VPN استارلینک"
+                           FontSize="26"
+                           FontWeight="Bold" />
+                <TextBlock Text="اتصال امن خود را مدیریت و وضعیت شبکه را در یک نگاه دنبال کنید"
                            Foreground="{StaticResource MutedBrush}"
-                           FontSize="14"
+                           FontSize="13"
                            Margin="0,5,0,0" />
             </StackPanel>
             <Border HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Background="#17352F"
-                    CornerRadius="12"
-                    Padding="12,7">
+                    BorderBrush="#28564E"
+                    BorderThickness="1"
+                    CornerRadius="20"
+                    Padding="13,8">
                 <TextBlock Text="WIREGUARD  ·  SING-BOX"
                            Foreground="{StaticResource AccentBrush}"
-                           FontSize="11"
+                           FontSize="10"
                            FontWeight="Bold"
                            FlowDirection="LeftToRight" />
             </Border>
@@ -46,323 +48,379 @@
                 Background="{StaticResource PanelBackground}"
                 BorderBrush="{StaticResource PanelBorder}"
                 BorderThickness="1"
-                CornerRadius="12"
-                Padding="16"
-                Margin="0,0,0,18">
-            <DockPanel>
-                <TextBlock Text="●"
-                           Foreground="{StaticResource AccentBrush}"
-                           FontSize="16"
-                           Margin="0,0,10,0"
-                           VerticalAlignment="Center" />
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border CornerRadius="10" Padding="10,6" Margin="0,0,8,0">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Background" Value="#402630" />
+                CornerRadius="16"
+                Padding="20"
+                Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.3*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="●"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#718096" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding ConnectionStateText}"
+                                   FontSize="11"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   VerticalAlignment="Center"
+                                   FlowDirection="LeftToRight" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Foreground="{StaticResource MutedBrush}"
+                               FontSize="12"
+                               Margin="0,8,0,0"
+                               TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                                        <Setter Property="Background" Value="#17352F" />
+                                    <DataTrigger Binding="{Binding HasError}" Value="True">
+                                        <Setter Property="Foreground" Value="Salmon" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Border.Style>
-                        <TextBlock Text="{Binding ConnectionStateText}"
-                                   Foreground="{StaticResource AccentBrush}"
-                                   FontSize="11"
-                                   FontWeight="Bold"
-                                   FlowDirection="LeftToRight" />
-                    </Border>
-                    <Border Background="#17352F" CornerRadius="10" Padding="10,6" Margin="12,0,0,0">
-                        <TextBlock Text="{Binding CurrentLatencyText}"
-                                   Foreground="{StaticResource AccentBrush}"
-                                   FontWeight="SemiBold"
-                                   FlowDirection="LeftToRight" />
-                    </Border>
-                    <Button Content="اندازه‌گیری تأخیر"
-                            Command="{Binding RefreshLatencyCommand}"
-                            Margin="8,0,0,0" />
+                        </TextBlock.Style>
+                    </TextBlock>
                 </StackPanel>
-                <TextBlock x:Name="StatusText"
-                           Text="{Binding StatusMessage}"
-                           VerticalAlignment="Center"
-                           TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasError}" Value="True">
-                                    <Setter Property="Foreground" Value="Salmon" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </DockPanel>
-        </Border>
-
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <DockPanel Grid.Row="0" Margin="0,0,0,12">
-                <TextBlock Text="پروفایل‌های شما"
-                           FontSize="17"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center" />
-                <Button x:Name="ImportButton"
-                        Content="＋  افزودن پروفایل"
-                        Click="ImportButton_Click"
-                        DockPanel.Dock="Left"
-                        Margin="0" />
-            </DockPanel>
-
-            <Border Grid.Row="1"
-                    Background="{StaticResource PanelBackground}"
-                    BorderBrush="{StaticResource PanelBorder}"
-                    BorderThickness="1"
-                    CornerRadius="12">
-                <Grid>
-                    <ListBox x:Name="ProfilesList"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             Padding="10"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                             SelectionChanged="ProfilesList_SelectionChanged">
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="Padding" Value="14" />
-                                <Setter Property="Margin" Value="0,0,0,8" />
-                                <Setter Property="Background" Value="#172437" />
-                                <Setter Property="BorderBrush" Value="#24344A" />
-                                <Setter Property="BorderThickness" Value="1" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListBoxItem">
-                                            <Border x:Name="ItemBorder"
-                                                    Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="9"
-                                                    Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter />
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#48D6C3" />
-                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#1B3040" />
-                                                </Trigger>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#3B536D" />
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Name}"
-                                                   FontSize="15"
-                                                   FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding ServiceName}"
-                                                   Foreground="{StaticResource MutedBrush}"
-                                                   FontSize="11"
-                                                   Margin="0,5,0,0"
-                                                   FlowDirection="LeftToRight"
-                                                   HorizontalAlignment="Right" />
-                                        <TextBlock Text="{Binding StatusDetails}"
-                                                   Foreground="{StaticResource MutedBrush}"
-                                                   FontSize="11"
-                                                   Margin="0,5,0,0"
-                                                   TextWrapping="Wrap" />
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding Status}"
-                                               Foreground="{StaticResource AccentBrush}"
-                                               VerticalAlignment="Center"
-                                               Margin="12,0,0,0" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-
-                    <StackPanel x:Name="EmptyState"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                IsHitTestVisible="False">
-                        <TextBlock Text="هنوز پروفایلی اضافه نشده"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center" />
-                        <TextBlock Text="برای شروع، فایل پیکربندی .conf را وارد کنید."
+                <Border Grid.Column="1"
+                        Background="#0C1725"
+                        BorderBrush="{StaticResource PanelBorder}"
+                        BorderThickness="1"
+                        CornerRadius="11"
+                        Padding="14,10"
+                        Margin="18,0">
+                    <StackPanel>
+                        <TextBlock Text="تأخیر شبکه"
                                    Foreground="{StaticResource MutedBrush}"
-                                   Margin="0,8,0,0"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <StackPanel Grid.Row="2"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0,14,0,0">
-                <Button x:Name="ConnectButton"
-                        Content="{Binding ConnectionButtonText}"
-                        Command="{Binding ToggleConnectionCommand}" />
-                <Button x:Name="SelectSingBoxConfigButton"
-                        Content="پیکربندی sing-box"
-                        Background="#20384A"
-                        Foreground="{StaticResource AccentBrush}"
-                        Click="SelectSingBoxConfigButton_Click" />
-                <Button x:Name="DiagnosticsButton"
-                        Content="آزمایش هوشمند"
-                        Background="#20384A"
-                        Foreground="{StaticResource AccentBrush}"
-                        Click="DiagnosticsButton_Click" />
-                <Button x:Name="DeleteButton"
-                        Content="حذف پروفایل"
-                        Background="#4A2630"
-                        Foreground="#FFD6DC"
-                        Margin="0"
-                        Click="DeleteButton_Click" />
-            </StackPanel>
-        </Grid>
-
-        <Border x:Name="DiagnosticsPanel"
-                Grid.Row="3"
-                Visibility="Collapsed"
-                Background="{StaticResource PanelBackground}"
-                BorderBrush="{StaticResource PanelBorder}"
-                BorderThickness="1"
-                CornerRadius="12"
-                Padding="14"
-                Margin="0,16,0,0">
-            <StackPanel>
-                <TextBlock x:Name="DiagnosticsSummaryText"
-                           FontWeight="SemiBold"
-                           TextWrapping="Wrap" />
-                <TextBlock x:Name="ActiveRouteText"
-                           Foreground="{StaticResource MutedBrush}"
-                           FontSize="12"
-                           Margin="0,6,0,0"
-                           TextWrapping="Wrap" />
-                <TextBlock Text="این بررسی ping، زمان TCP/HTTP و پایداری مسیر را می‌سنجد؛ برای پروفایل انتخاب‌شده نام Endpoint نیز با DNS سیستم بررسی می‌شود. هیچ تنظیم شبکه‌ای خودکار تغییر نمی‌کند."
-                           Foreground="{StaticResource MutedBrush}"
-                           FontSize="11"
-                           Margin="0,5,0,0"
-                           TextWrapping="Wrap" />
-                <TextBlock x:Name="DiagnosticsDetailsText"
-                           Foreground="{StaticResource MutedBrush}"
-                           FontSize="12"
-                           Margin="0,8,0,0"
-                           TextWrapping="Wrap" />
-                <ItemsControl x:Name="RecommendationsList" Margin="0,8,0,0">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}"
+                                   FontSize="10" />
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <TextBlock Text="{Binding CurrentLatencyText}"
                                        Foreground="{StaticResource AccentBrush}"
-                                       Margin="0,3,0,0"
-                                       TextWrapping="Wrap" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </Border>
-
-        <Border Grid.Row="4"
-                Background="{StaticResource PanelBackground}"
-                BorderBrush="{StaticResource PanelBorder}"
-                BorderThickness="1"
-                CornerRadius="12"
-                Padding="14"
-                Margin="0,16,0,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                    <CheckBox Content="دورزدن مسیر ترافیک سرویس‌های هوش مصنوعی"
-                              IsChecked="{Binding EnableAiBypass, Mode=TwoWay}"
-                              Foreground="{StaticResource TextBrush}"
-                              FontWeight="SemiBold" />
-                    <TextBlock Text="برای اتصال بعدی sing-box اعمال می‌شود و به outbound با tag برابر direct نیاز دارد."
-                               Foreground="{StaticResource MutedBrush}"
-                               FontSize="10"
-                               Margin="0,4,0,0"
-                               TextWrapping="Wrap" />
-                    <CheckBox Content="محافظت سراسری Kill Switch (نیازمند مدیر)"
-                              IsChecked="{Binding IsKillSwitchEnabled, Mode=TwoWay}"
-                              IsEnabled="{Binding CanToggleKillSwitch}"
-                              Click="KillSwitchToggle_Click"
-                              Foreground="#FFD6DC"
-                              Margin="0,9,0,0" />
-                    <TextBlock Text="در حالت فعال، خروجی همهٔ برنامه‌ها به‌جز IP سرور VPN مسدود می‌شود."
-                               Foreground="{StaticResource MutedBrush}"
-                               FontSize="10"
-                               Margin="0,4,0,0"
-                               TextWrapping="Wrap" />
-                    <TextBlock Text="{Binding SingBoxConfigPath}"
-                               Foreground="{StaticResource MutedBrush}"
-                               FontSize="11"
-                               Margin="0,7,0,0"
-                               TextWrapping="Wrap"
-                               FlowDirection="LeftToRight" />
-                    <Expander Header="پیش‌نمایش قواعد sing-box"
-                              Foreground="{StaticResource MutedBrush}"
-                              Margin="0,8,0,0">
-                        <TextBox Text="{Binding AiRoutingRulesJson}"
-                                 IsReadOnly="True"
-                                 AcceptsReturn="True"
-                                 TextWrapping="NoWrap"
-                                 VerticalScrollBarVisibility="Auto"
-                                 HorizontalScrollBarVisibility="Auto"
-                                 Height="115"
-                                 Background="#0B1220"
-                                 Foreground="{StaticResource AccentBrush}"
-                                 BorderBrush="{StaticResource PanelBorder}"
-                                 FontFamily="Consolas"
-                                 FlowDirection="LeftToRight" />
-                    </Expander>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="{Binding LatencySummary}"
-                               Foreground="{StaticResource MutedBrush}"
-                               FontSize="11"
-                               TextWrapping="Wrap"
-                               Margin="0,0,0,8" />
-                    <TextBlock Text="گزارش زندهٔ اتصال"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,5" />
-                    <ListBox x:Name="ConnectionLogList"
-                             ItemsSource="{Binding ConnectionLogs}"
-                             Height="135"
-                             Background="#0B1220"
-                             Foreground="{StaticResource MutedBrush}"
-                             BorderBrush="{StaticResource PanelBorder}"
-                             FontFamily="Consolas"
-                             FontSize="11"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-                </StackPanel>
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       FlowDirection="LeftToRight" />
+                            <Button Content="اندازه‌گیری"
+                                    Command="{Binding RefreshLatencyCommand}"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Padding="10,6"
+                                    Margin="12,0,0,0"
+                                    FontSize="11" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Button x:Name="ConnectButton"
+                        Grid.Column="2"
+                        Content="{Binding ConnectionButtonText}"
+                        Command="{Binding ToggleConnectionCommand}"
+                        MinWidth="128"
+                        VerticalAlignment="Center" />
             </Grid>
         </Border>
 
-        <TextBlock Grid.Row="5"
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.35*" />
+                <ColumnDefinition Width="0.9*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Margin="0,0,12,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <DockPanel Grid.Row="0" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="گره‌ها و پروفایل‌ها"
+                                   FontSize="17"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Text="یک مسیر اتصال را برای شروع انتخاب کنید"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   FontSize="11"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    <Button x:Name="ImportButton"
+                            Content="＋  افزودن پروفایل"
+                            Click="ImportButton_Click"
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource SecondaryButton}" />
+                </DockPanel>
+
+                <Border Grid.Row="1"
+                        Background="{StaticResource PanelBackground}"
+                        BorderBrush="{StaticResource PanelBorder}"
+                        BorderThickness="1"
+                        CornerRadius="14">
+                    <Grid>
+                        <ListBox x:Name="ProfilesList"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="11"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 SelectionChanged="ProfilesList_SelectionChanged">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="15" />
+                                    <Setter Property="Margin" Value="0,0,0,9" />
+                                    <Setter Property="Background" Value="{StaticResource PanelElevatedBackground}" />
+                                    <Setter Property="BorderBrush" Value="{StaticResource PanelBorder}" />
+                                    <Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <Border x:Name="ItemBorder"
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="11"
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                        <Setter TargetName="ItemBorder" Property="Background" Value="#1A3040" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#48617A" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding ServiceName}"
+                                                       Foreground="{StaticResource MutedBrush}"
+                                                       FontSize="10"
+                                                       Margin="0,5,0,0"
+                                                       FlowDirection="LeftToRight"
+                                                       HorizontalAlignment="Right" />
+                                            <TextBlock Text="{Binding StatusDetails}"
+                                                       Foreground="{StaticResource MutedBrush}"
+                                                       FontSize="11"
+                                                       Margin="0,5,0,0"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <Border Grid.Column="1"
+                                                Background="#203247"
+                                                CornerRadius="8"
+                                                Padding="9,5"
+                                                VerticalAlignment="Center"
+                                                Margin="10,0,0,0">
+                                            <TextBlock Text="{Binding Status}"
+                                                       Foreground="{StaticResource AccentBrush}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold" />
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <StackPanel x:Name="EmptyState"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False">
+                            <TextBlock Text="هنوز پروفایلی اضافه نشده"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="برای شروع، فایل پیکربندی .conf را وارد کنید."
+                                       Foreground="{StaticResource MutedBrush}"
+                                       Margin="0,8,0,0"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <WrapPanel Grid.Row="2"
+                           HorizontalAlignment="Right"
+                           Margin="0,13,0,0">
+                    <Button x:Name="SelectSingBoxConfigButton"
+                            Content="پیکربندی sing-box"
+                            Click="SelectSingBoxConfigButton_Click"
+                            Style="{StaticResource SecondaryButton}"
+                            Margin="0,0,8,0" />
+                    <Button x:Name="DiagnosticsButton"
+                            Content="آزمایش هوشمند"
+                            Click="DiagnosticsButton_Click"
+                            Style="{StaticResource SecondaryButton}"
+                            Margin="0,0,8,0" />
+                    <Button x:Name="DeleteButton"
+                            Content="حذف پروفایل"
+                            Click="DeleteButton_Click"
+                            Style="{StaticResource DangerButton}" />
+                </WrapPanel>
+            </Grid>
+
+            <ScrollViewer Grid.Column="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="12,0,0,0">
+                    <Border Background="{StaticResource PanelBackground}"
+                            BorderBrush="{StaticResource PanelBorder}"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="17">
+                        <StackPanel>
+                            <TextBlock Text="تنظیمات و محافظت"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,14" />
+                            <CheckBox Content="دورزدن مسیر ترافیک سرویس‌های هوش مصنوعی"
+                                      IsChecked="{Binding EnableAiBypass, Mode=TwoWay}"
+                                      FontWeight="SemiBold" />
+                            <TextBlock Text="برای اتصال بعدی sing-box اعمال می‌شود و به outbound با tag برابر direct نیاز دارد."
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10"
+                                       Margin="0,5,0,12"
+                                       TextWrapping="Wrap" />
+                            <Border Height="1"
+                                    Background="{StaticResource PanelBorder}"
+                                    Margin="0,0,0,12" />
+                            <CheckBox Content="محافظت سراسری Kill Switch (نیازمند مدیر)"
+                                      IsChecked="{Binding IsKillSwitchEnabled, Mode=TwoWay}"
+                                      IsEnabled="{Binding CanToggleKillSwitch}"
+                                      Click="KillSwitchToggle_Click"
+                                      Foreground="#FFD6DC"
+                                      FontWeight="SemiBold" />
+                            <TextBlock Text="در حالت فعال، خروجی همهٔ برنامه‌ها به‌جز IP سرور VPN مسدود می‌شود."
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10"
+                                       Margin="0,5,0,0"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding SingBoxConfigPath}"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10"
+                                       Margin="0,12,0,0"
+                                       TextWrapping="Wrap"
+                                       FlowDirection="LeftToRight" />
+                            <Expander Header="پیش‌نمایش قواعد sing-box"
+                                      Margin="0,10,0,0">
+                                <TextBox Text="{Binding AiRoutingRulesJson}"
+                                         IsReadOnly="True"
+                                         AcceptsReturn="True"
+                                         TextWrapping="NoWrap"
+                                         VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Auto"
+                                         Height="110"
+                                         Background="#0B1220"
+                                         Foreground="{StaticResource AccentBrush}"
+                                         BorderBrush="{StaticResource PanelBorder}"
+                                         FontFamily="Consolas"
+                                         FlowDirection="LeftToRight" />
+                            </Expander>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="DiagnosticsPanel"
+                            Visibility="Collapsed"
+                            Background="{StaticResource PanelBackground}"
+                            BorderBrush="{StaticResource PanelBorder}"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="16"
+                            Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock x:Name="DiagnosticsSummaryText"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap" />
+                            <TextBlock x:Name="ActiveRouteText"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="11"
+                                       Margin="0,6,0,0"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="این بررسی ping، زمان TCP/HTTP و پایداری مسیر را می‌سنجد؛ برای پروفایل انتخاب‌شده نام Endpoint نیز با DNS سیستم بررسی می‌شود. هیچ تنظیم شبکه‌ای خودکار تغییر نمی‌کند."
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10"
+                                       Margin="0,5,0,0"
+                                       TextWrapping="Wrap" />
+                            <TextBlock x:Name="DiagnosticsDetailsText"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="11"
+                                       Margin="0,8,0,0"
+                                       TextWrapping="Wrap" />
+                            <ItemsControl x:Name="RecommendationsList" Margin="0,8,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"
+                                                   Foreground="{StaticResource AccentBrush}"
+                                                   Margin="0,3,0,0"
+                                                   TextWrapping="Wrap" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource PanelBackground}"
+                            BorderBrush="{StaticResource PanelBorder}"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="17"
+                            Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="وضعیت شبکه"
+                                       FontSize="14"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding LatencySummary}"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10"
+                                       TextWrapping="Wrap"
+                                       Margin="0,6,0,14" />
+                            <TextBlock Text="گزارش زندهٔ اتصال"
+                                       FontWeight="SemiBold"
+                                       FontSize="12"
+                                       Margin="0,0,0,7" />
+                            <ListBox x:Name="ConnectionLogList"
+                                     ItemsSource="{Binding ConnectionLogs}"
+                                     Height="150"
+                                     Background="#0B1220"
+                                     Foreground="{StaticResource MutedBrush}"
+                                     BorderBrush="{StaticResource PanelBorder}"
+                                     FontFamily="Consolas"
+                                     FontSize="10"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <TextBlock Grid.Row="3"
                    Text="فایل‌های پیکربندی با رمزگذاری ویندوز برای حساب کاربری فعلی نگهداری می‌شوند."
                    Foreground="{StaticResource MutedBrush}"
-                   FontSize="11"
-                   Margin="0,22,0,0"
+                   FontSize="10"
+                   Margin="0,16,0,0"
                    TextWrapping="Wrap" />
     </Grid>
 </Window>
