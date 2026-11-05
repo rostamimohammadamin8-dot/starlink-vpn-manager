@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Release',
-    [string]$RuntimeIdentifier = 'win-x64'
+    [string]$RuntimeIdentifier = 'win-x64',
+    [switch]$AllowMissingGeoIpForLocalTesting
 )
 
 $ErrorActionPreference = 'Stop'
@@ -152,9 +153,11 @@ Assert-CoreSourcesUnchanged
 
 $requiredAssets = @(
     @{ Path = (Join-Path $xrayDirectory 'xray.exe'); Name = 'Xray Windows runtime' },
-    @{ Path = (Join-Path $singBoxDirectory 'sing-box.exe'); Name = 'sing-box Windows runtime' },
-    @{ Path = $geoIpSource; Name = 'licensed GeoLite2-Country.mmdb' }
+    @{ Path = (Join-Path $singBoxDirectory 'sing-box.exe'); Name = 'sing-box Windows runtime' }
 )
+if (-not $AllowMissingGeoIpForLocalTesting) {
+    $requiredAssets += @{ Path = $geoIpSource; Name = 'licensed country MMDB' }
+}
 
 Invoke-SidecarTests -TargetFramework 'net8.0-windows' -RuntimeVersionPrefix '8.0'
 Invoke-SidecarTests -TargetFramework 'net10.0-windows10.0.19041.0' -RuntimeVersionPrefix '10.0'
@@ -165,8 +168,13 @@ foreach ($asset in $requiredAssets) {
         throw "Missing $($asset.Name): $($asset.Path). Provision the asset under its documented path, then rerun the script."
     }
 }
-if ((Get-Item -LiteralPath $geoIpSource).Length -lt 1000000) {
-    throw "GeoLite2-Country.mmdb is unexpectedly small: $geoIpSource"
+if (Test-Path -LiteralPath $geoIpSource -PathType Leaf) {
+    if ((Get-Item -LiteralPath $geoIpSource).Length -lt 1000000) {
+    throw "Country MMDB is unexpectedly small: $geoIpSource"
+    }
+}
+elseif ($AllowMissingGeoIpForLocalTesting) {
+    Write-Warning 'LOCAL TESTING ONLY: the country MMDB is omitted. Do not distribute this archive; GeoIpService will not be available.'
 }
 
 if (Test-Path -LiteralPath $outputDirectory) {
@@ -219,7 +227,9 @@ Copy-Item -LiteralPath $sidecarDll -Destination (Join-Path $stageDirectory 'Cust
 Copy-Item -LiteralPath $sidecarManifest -Destination (Join-Path $stageDirectory 'sidecar-manifest.json') -Force
 New-Item -ItemType Directory -Path (Join-Path $stageDirectory 'dat') -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $stageDirectory 'bin') -Force | Out-Null
-Copy-Item -LiteralPath $geoIpSource -Destination (Join-Path $stageDirectory 'dat\GeoLite2-Country.mmdb') -Force
+if (Test-Path -LiteralPath $geoIpSource -PathType Leaf) {
+    Copy-Item -LiteralPath $geoIpSource -Destination (Join-Path $stageDirectory 'dat\GeoLite2-Country.mmdb') -Force
+}
 $stageXrayDirectory = Join-Path $stageDirectory 'bin\Xray'
 $stageSingBoxDirectory = Join-Path $stageDirectory 'bin\sing_box'
 New-Item -ItemType Directory -Path $stageXrayDirectory, $stageSingBoxDirectory -Force | Out-Null
@@ -233,19 +243,35 @@ Extract this archive to a writable folder and run v2rayN.exe. The package does n
 
 The existing v2rayN runtime stores its SQLite configuration under guiConfigs\guiNDB.db and runtime data beneath the application directory while that directory is writable. If the application directory is not writable, upstream v2rayN may fall back to LocalAppData; this package does not modify that host behavior. Use a writable extraction location for portable data locality. TUN operation may independently request administrator approval.
 
-The GeoLite2 database is licensed data. Observe the applicable MaxMind license and redistribution terms.
 '@
+if (Test-Path -LiteralPath (Join-Path $stageDirectory 'dat\GeoLite2-Country.mmdb') -PathType Leaf) {
+    $portableReadme += @'
+
+Country database attribution: IP Geolocation by DB-IP.com, IP to Country Lite, November 2026.
+Source: https://db-ip.com/db/download/ip-to-country-lite
+License: Creative Commons Attribution 4.0 International (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+The MMDB is packaged under the runtime-compatible filename dat\GeoLite2-Country.mmdb; it is DB-IP data, not a MaxMind GeoLite2 database. The database is redistributed under CC BY 4.0.
+'@
+}
+else {
+    $portableReadme += @'
+
+LOCAL TESTING ONLY: This archive omits the country MMDB. GeoIP lookup will not be available. Do not distribute this archive as a production build. Add a valid, licensed dat\GeoLite2-Country.mmdb and rebuild without -AllowMissingGeoIpForLocalTesting for production.
+'@
+}
 Set-Content -LiteralPath (Join-Path $stageDirectory 'PORTABLE-README.txt') -Value $portableReadme -Encoding utf8
 
 $requiredArchiveEntries = @(
     'v2rayN.exe',
     'CustomExtensions.dll',
     'sidecar-manifest.json',
-    'dat/GeoLite2-Country.mmdb',
     'bin/Xray/xray.exe',
     'bin/sing_box/sing-box.exe',
     'PORTABLE-README.txt'
 )
+if (Test-Path -LiteralPath (Join-Path $stageDirectory 'dat\GeoLite2-Country.mmdb') -PathType Leaf) {
+    $requiredArchiveEntries += 'dat/GeoLite2-Country.mmdb'
+}
 $archiveEntries = Get-ChildItem -LiteralPath $stageDirectory -Force -Recurse -File |
     ForEach-Object { $_.FullName.Substring($stageDirectory.Length + 1).Replace('\', '/') }
 $missingEntries = @($requiredArchiveEntries | Where-Object { $_ -notin $archiveEntries })

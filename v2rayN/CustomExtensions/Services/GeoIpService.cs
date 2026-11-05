@@ -20,7 +20,7 @@ public sealed class GeoIpService : IDisposable
         databasePath ??= GetDefaultDatabasePath();
         if (!File.Exists(databasePath))
         {
-            throw new FileNotFoundException("The GeoLite2 Country database was not found.", databasePath);
+            throw new FileNotFoundException("The country MMDB was not found.", databasePath);
         }
 
         _reader = new DatabaseReader(databasePath);

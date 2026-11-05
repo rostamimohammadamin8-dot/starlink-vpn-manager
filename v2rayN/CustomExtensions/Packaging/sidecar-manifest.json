@@ -22,17 +22,23 @@
   ],
   "runtimeAssets": [
     {
-      "name": "GeoLite2-Country.mmdb",
+      "name": "Country MMDB (runtime filename: GeoLite2-Country.mmdb)",
       "source": "dat/GeoLite2-Country.mmdb",
       "destination": "dat/GeoLite2-Country.mmdb relative to the application base directory",
       "requiredWhen": "GeoIpService is enabled",
-      "licenseRequired": true
+      "licenseRequired": true,
+      "packagedSource": "DB-IP IP to Country Lite, November 2026",
+      "license": "Creative Commons Attribution 4.0 International",
+      "attribution": "IP Geolocation by DB-IP.com",
+      "sourceUrl": "https://db-ip.com/db/download/ip-to-country-lite",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
     }
   ],
   "releaseValidation": [
     "Build both sidecar target frameworks in Release configuration.",
     "Run CustomExtensions.Tests and verify all localization, HTTP/TCP stability, storage, and GeoIP-path assertions pass.",
-    "If GeoIP is enabled, include the licensed GeoLite2-Country.mmdb at dat/GeoLite2-Country.mmdb and verify GeoIpService loads that exact path.",
+    "If GeoIP is enabled, include a licensed MaxMind DB-compatible country database at dat/GeoLite2-Country.mmdb and verify GeoIpService loads that exact path.",
+    "For the bundled DB-IP IP to Country Lite data, include DB-IP attribution and the CC BY 4.0 license in the portable distribution.",
     "Include CustomExtensions.dll and its dependency assemblies in the application output; do not copy source or test assemblies into the installer.",
     "No Inno Setup .iss file or v2rayN-Pro-Setup.exe packaging definition was found in the audited workspace; confirm installer inputs and asset-copy rules when that script is available."
   ]
