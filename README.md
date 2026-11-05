@@ -97,7 +97,14 @@ dotnet build .\v2rayN\CustomExtensions\CustomExtensions.csproj -f net8.0-windows
 dotnet run --project .\v2rayN\CustomExtensions.Tests\CustomExtensions.Tests.csproj -c Release
 ```
 
-To use `Publish-Portable.bat`, place the Windows Xray files in `bin/Xray/`, sing-box files in `bin/sing_box/`, and a licensed `GeoLite2-Country.mmdb` in `dat/`. The script publishes the upstream WPF app as a self-contained win-x64 single-file package and copies those assets into the output folder. These binaries and the GeoLite2 database are not committed. For tag builds, configure repository variables `XRAY_WINDOWS_ARCHIVE_URL`, `XRAY_WINDOWS_ARCHIVE_SHA256`, `SING_BOX_WINDOWS_ARCHIVE_URL`, and `SING_BOX_WINDOWS_ARCHIVE_SHA256` with GitHub HTTPS ZIP locations and their 64-digit SHA-256 digests; configure the `MAXMIND_LICENSE_KEY` secret for the licensed GeoLite2 download. The release workflow verifies archive hashes and fails with an explicit error when an asset is missing or invalid. Do not redistribute the MaxMind database without complying with its license.
+For a verified archive, place the Windows Xray files in `bin/Xray/`, sing-box files in `bin/sing_box/`, and a licensed `GeoLite2-Country.mmdb` in `dat/`, then run:
+
+```powershell
+.\Build-Portable.ps1
+tar -tf .\Output\v2rayN-Pro-Portable.zip
+```
+
+The script runs the complete sidecar TUnit suite first, rejects tracked or untracked changes under the core `v2rayN/` projects, publishes a self-contained win-x64 WPF app, stages `v2rayN.exe`, `CustomExtensions.dll`, `sidecar-manifest.json`, both core runtimes and the GeoLite2 database, then creates and validates `Output/v2rayN-Pro-Portable.zip`. It cleans only the repository-local `Output/` directory. These runtime binaries and the licensed GeoLite2 database are not committed. The existing `Publish-Portable.bat` remains available for preparing a publish directory; it does not create the named ZIP archive. For tag builds, configure repository variables `XRAY_WINDOWS_ARCHIVE_URL`, `XRAY_WINDOWS_ARCHIVE_SHA256`, `SING_BOX_WINDOWS_ARCHIVE_URL`, and `SING_BOX_WINDOWS_ARCHIVE_SHA256` with GitHub HTTPS ZIP locations and their 64-digit SHA-256 digests; configure the `MAXMIND_LICENSE_KEY` secret for the licensed GeoLite2 download. The release workflow verifies archive hashes and fails with an explicit error when an asset is missing or invalid. Do not redistribute the MaxMind database without complying with its license.
 
 The runtime uses upstream's existing portable data-directory selection and does not force elevation in the manifest. It may fall back to LocalAppData when the application directory is not writable; this extension does not override that upstream behavior. TUN setup may request administrator approval through the existing v2rayN mechanism; an unconditional `requireAdministrator` manifest would unnecessarily elevate every launch.
 

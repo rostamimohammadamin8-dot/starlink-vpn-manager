@@ -1,0 +1,39 @@
+{
+  "scope": "v2rayN CustomExtensions sidecar",
+  "targetFrameworks": [
+    "net8.0-windows",
+    "net10.0-windows10.0.19041.0"
+  ],
+  "runtimeComponents": [
+    {
+      "name": "CustomExtensions.dll",
+      "source": "v2rayN/CustomExtensions/bin/<Configuration>/<TargetFramework>/",
+      "destination": "application root",
+      "required": true
+    },
+    {
+      "name": "Persian sidecar translations and RTL hooks",
+      "source": "compiled into CustomExtensions.dll",
+      "destination": "application root",
+      "required": true,
+      "translationKeyCount": 44,
+      "culture": "fa-IR"
+    }
+  ],
+  "runtimeAssets": [
+    {
+      "name": "GeoLite2-Country.mmdb",
+      "source": "dat/GeoLite2-Country.mmdb",
+      "destination": "dat/GeoLite2-Country.mmdb relative to the application base directory",
+      "requiredWhen": "GeoIpService is enabled",
+      "licenseRequired": true
+    }
+  ],
+  "releaseValidation": [
+    "Build both sidecar target frameworks in Release configuration.",
+    "Run CustomExtensions.Tests and verify all localization, HTTP/TCP stability, storage, and GeoIP-path assertions pass.",
+    "If GeoIP is enabled, include the licensed GeoLite2-Country.mmdb at dat/GeoLite2-Country.mmdb and verify GeoIpService loads that exact path.",
+    "Include CustomExtensions.dll and its dependency assemblies in the application output; do not copy source or test assemblies into the installer.",
+    "No Inno Setup .iss file or v2rayN-Pro-Setup.exe packaging definition was found in the audited workspace; confirm installer inputs and asset-copy rules when that script is available."
+  ]
+}

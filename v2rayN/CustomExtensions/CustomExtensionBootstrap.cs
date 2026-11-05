@@ -9,17 +9,33 @@ namespace v2rayN.CustomExtensions;
 
 public static class CustomExtensionBootstrap
 {
-    public static async Task InitializeAsync(CancellationToken cancellationToken = default)
+    public static Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        var storage = new SqliteConfigStorageProvider(
-            LoadSubscriptionsAsync,
-            UpsertSubscriptionAsync,
-            DeleteSubscriptionAsync);
-        var result = await CustomBuiltinHandler.EnsureSubscriptionAsync(storage, cancellationToken);
+        _ = Task.Run(() => InitializeInBackgroundAsync(cancellationToken), CancellationToken.None);
+        return Task.CompletedTask;
+    }
 
-        if (result.Added)
+    private static async Task InitializeInBackgroundAsync(CancellationToken cancellationToken)
+    {
+        try
         {
-            _ = UpdateNewSubscriptionInBackgroundAsync(result.Subscription.Id);
+            var storage = new SqliteConfigStorageProvider(
+                LoadSubscriptionsAsync,
+                UpsertSubscriptionAsync,
+                DeleteSubscriptionAsync);
+            var results = await CustomBuiltinHandler.EnsureSubscriptionsAsync(
+                storage,
+                CustomBuiltinHandler.BuiltinSubscriptions,
+                cancellationToken);
+
+            foreach (var result in results.Where(item => item.Added))
+            {
+                _ = UpdateNewSubscriptionInBackgroundAsync(result.Subscription.Id);
+            }
+        }
+        catch (Exception exception)
+        {
+            Logging.SaveLog("CustomExtensionBootstrap.Initialize", exception);
         }
     }
 
