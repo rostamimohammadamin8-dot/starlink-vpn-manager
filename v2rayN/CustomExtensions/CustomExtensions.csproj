@@ -17,4 +17,9 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
     <Compile Remove="CustomExtensionBootstrap.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Packaging\sidecar-manifest.json"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

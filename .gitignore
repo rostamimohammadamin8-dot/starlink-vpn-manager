@@ -407,3 +407,4 @@ FodyWeavers.xsd
 /dat/*.mmdb
 /bin/Xray/
 /bin/sing_box/
+/Output/
