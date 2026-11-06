@@ -256,7 +256,7 @@ public sealed class NativeWebRestartCoordinator
             {
                 return new(false, "The previous Web owner did not release the current data-scope instance lock.");
             }
-            await _delay(Min(_pollInterval, _timeout - timeout.Elapsed), cancellationToken);
+            await DelayForNextPollAsync(timeout, cancellationToken);
         }
 
         IWebReplacementProcess? replacement;
@@ -302,7 +302,7 @@ public sealed class NativeWebRestartCoordinator
                     return new(false, "The native replacement process exited before its Web health endpoint became ready.", replacement.Id);
                 }
 
-                await _delay(Min(_pollInterval, _timeout - timeout.Elapsed), cancellationToken);
+                await DelayForNextPollAsync(timeout, cancellationToken);
             }
 
             var currentOwner = _ownershipProbe.IsLockHeld(lockPath)
@@ -326,6 +326,15 @@ public sealed class NativeWebRestartCoordinator
         return expectedRunning
             ? health.CoreProcessIds is { Count: > 0 }
             : health.CoreProcessIds is { Count: 0 };
+    }
+
+    private async Task DelayForNextPollAsync(Stopwatch stopwatch, CancellationToken cancellationToken)
+    {
+        var remaining = _timeout - stopwatch.Elapsed;
+        if (remaining > TimeSpan.Zero)
+        {
+            await _delay(Min(_pollInterval, remaining), cancellationToken);
+        }
     }
 
     private static TimeSpan Min(TimeSpan left, TimeSpan right) => left < right ? left : right;

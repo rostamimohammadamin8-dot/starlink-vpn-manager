@@ -224,6 +224,33 @@ public class WebRestartCoordinatorTests
         await starter.StartCount.Should().BeEqualTo(1);
     }
 
+    [Test]
+    public async Task HandoffDoesNotDelayWithNegativeRemainingTimeoutAfterSlowHealthProbe()
+    {
+        const string lockPath = "/data/current/v2rayN.WebAPI.instance.lock";
+        var ownership = new FakeOwnershipProbe();
+        ownership.Set(lockPath, held: false, owner: null);
+        var starter = new FakeProcessStarter(() =>
+        {
+            ownership.Set(lockPath, held: true, owner: 456);
+            return (new FakeReplacementProcess(456), true);
+        });
+        var coordinator = new NativeWebRestartCoordinator(
+            new FakeHealthProbe(null, TimeSpan.FromMilliseconds(50)),
+            starter,
+            ownership,
+            timeout: TimeSpan.FromMilliseconds(30),
+            pollInterval: TimeSpan.FromMilliseconds(2));
+
+        var result = await coordinator.StartReplacementAfterOwnerReleaseAsync(
+            lockPath,
+            new Uri("http://127.0.0.1:5080/api/health"),
+            NewCommand());
+
+        await result.Success.Should().BeFalse();
+        await result.Message.Should().Contain("did not become healthy");
+    }
+
     private static WebReplacementCommand NewCommand() => new(
         "/usr/bin/setsid",
         ["/opt/v2rayN.WebAPI", WebLaunchOptions.BackgroundChildFlag],
@@ -273,14 +300,18 @@ public class WebRestartCoordinatorTests
         public void Dispose() { }
     }
 
-    private sealed class FakeHealthProbe(int? processId) : IWebHealthProbe
+    private sealed class FakeHealthProbe(int? processId, TimeSpan? delay = null) : IWebHealthProbe
     {
         public Uri? LastUri { get; private set; }
 
-        public Task<WebHealthProbeResult> ProbeAsync(Uri healthUri, CancellationToken cancellationToken)
+        public async Task<WebHealthProbeResult> ProbeAsync(Uri healthUri, CancellationToken cancellationToken)
         {
             LastUri = healthUri;
-            return Task.FromResult(new WebHealthProbeResult(processId.HasValue, processId));
+            if (delay is TimeSpan wait)
+            {
+                await Task.Delay(wait, cancellationToken);
+            }
+            return new WebHealthProbeResult(processId.HasValue, processId);
         }
     }
 }
