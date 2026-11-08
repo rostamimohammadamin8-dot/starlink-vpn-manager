@@ -15,7 +15,7 @@ on:
         default: ''
         type: string
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       - 'v2rayN/v2rayN.WebAPI/**'
       - 'v2rayN/ServiceLib/**'
@@ -29,7 +29,7 @@ on:
       - '.github/workflows/build-all.yml'
       - '.github/workflows/upload-sign.yml'
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - 'v2rayN/v2rayN.WebAPI/**'
       - 'v2rayN/ServiceLib/**'
@@ -150,7 +150,7 @@ jobs:
         run: dotnet build v2rayN/v2rayN.WebAPI/v2rayN.WebAPI.csproj --configuration Release --no-restore
       - name: Run WebAPI.Tests
         shell: pwsh
-        run: dotnet test --project v2rayN/v2rayN.WebAPI/Tests/v2rayN.WebAPI.Tests.csproj --configuration Release --no-restore
+        run: dotnet test --project v2rayN/v2rayN.WebAPI/Tests/v2rayN.WebAPI.Tests.csproj --configuration Release --no-restore -- --maximum-parallel-tests 1
       - name: Run ServiceLib.Tests
         shell: pwsh
         run: dotnet test --project v2rayN/ServiceLib.Tests/ServiceLib.Tests.csproj --configuration Release --no-restore
@@ -332,7 +332,7 @@ jobs:
         run: dotnet build v2rayN/v2rayN.WebAPI/v2rayN.WebAPI.csproj --configuration Release --no-restore
       - name: Run WebAPI.Tests
         shell: pwsh
-        run: dotnet test --project v2rayN/v2rayN.WebAPI/Tests/v2rayN.WebAPI.Tests.csproj --configuration Release --no-restore
+        run: dotnet test --project v2rayN/v2rayN.WebAPI/Tests/v2rayN.WebAPI.Tests.csproj --configuration Release --no-restore -- --maximum-parallel-tests 1
       - name: Run ServiceLib.Tests
         shell: pwsh
         run: dotnet test --project v2rayN/ServiceLib.Tests/ServiceLib.Tests.csproj --configuration Release --no-restore
