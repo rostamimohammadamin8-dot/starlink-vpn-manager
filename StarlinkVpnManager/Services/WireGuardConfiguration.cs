@@ -15,7 +15,7 @@ internal static class WireGuardConfiguration
 
         foreach (var rawLine in configuration.Split('\n'))
         {
-            var line = rawLine.Split('#', 2)[0].Trim();
+            var line = StripInlineComment(rawLine).Trim();
             if (line.Length == 0)
             {
                 continue;
@@ -112,7 +112,7 @@ internal static class WireGuardConfiguration
 
         foreach (var rawLine in configuration.Split('\n'))
         {
-            var line = rawLine.Split('#', 2)[0].Trim();
+            var line = StripInlineComment(rawLine).Trim();
             if (line.Length == 0)
             {
                 continue;
@@ -203,6 +203,12 @@ internal static class WireGuardConfiguration
         {
             throw new FormatException($"مقدار {keyName} یک کلید WireGuard معتبر نیست.");
         }
+    }
+
+    private static string StripInlineComment(string line)
+    {
+        var commentIndex = line.IndexOfAny(['#', ';']);
+        return commentIndex >= 0 ? line[..commentIndex] : line;
     }
 }
 
