@@ -10,11 +10,26 @@ public class InverseBooleanConverter : IValueConverter
             throw new InvalidOperationException("The target must be a boolean");
         }
 
-        return !(bool)value;
+        if (value is not bool boolean)
+        {
+            throw new InvalidOperationException("The value must be a boolean");
+        }
+
+        return !boolean;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (targetType != typeof(bool))
+        {
+            throw new InvalidOperationException("The target must be a boolean");
+        }
+
+        if (value is not bool boolean)
+        {
+            throw new InvalidOperationException("The value must be a boolean");
+        }
+
+        return !boolean;
     }
 }
