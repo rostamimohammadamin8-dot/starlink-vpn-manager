@@ -196,15 +196,36 @@ internal sealed class AiRoutingService
     {
         for (var index = rules.Count - 1; index >= 0; index--)
         {
-            if (rules[index] is JsonObject rule
-                && rule["outbound"] is not null
-                && rule.All(property => property.Key == "outbound" || property.Key == "action"))
+            if (rules[index] is JsonObject rule && IsCatchAllRule(rule))
             {
                 return index;
             }
         }
 
         return rules.Count;
+    }
+
+    private static bool IsCatchAllRule(JsonObject rule)
+    {
+        if (rule["outbound"] is null)
+        {
+            return false;
+        }
+
+        var hasDomainOrIpSelector = rule.ContainsKey("domain")
+                                    || rule.ContainsKey("domain_suffix")
+                                    || rule.ContainsKey("ip_cidr")
+                                    || rule.ContainsKey("geoip")
+                                    || rule.ContainsKey("geosite")
+                                    || rule.ContainsKey("source_address")
+                                    || rule.ContainsKey("source_port")
+                                    || rule.ContainsKey("port");
+        if (hasDomainOrIpSelector)
+        {
+            return false;
+        }
+
+        return rule.All(property => property.Key is "outbound" or "type" or "action");
     }
 
     private static void EnsureOutboundExists(JsonObject root, string outboundTag)
