@@ -24,16 +24,10 @@ public class DownloadService
     {
         try
         {
-            await DownloaderHelper.Instance.DownloadDataAsync4Speed(webProxy,
-                  url,
-                  OnProgress,
-                  cancellationToken);
-
-            void OnProgress(string message)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                updateFunc.Invoke(false, $"{message}");
-            }
+            await RunDownloadWithProgressAsync(
+                (onProgress, token) => DownloaderHelper.Instance.DownloadDataAsync4Speed(webProxy, url, onProgress, token),
+                updateFunc,
+                cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -47,7 +41,61 @@ public class DownloadService
                 await updateFunc.Invoke(false, ex.InnerException.Message);
             }
         }
+
         return 0;
+    }
+
+    private static async Task RunDownloadWithProgressAsync(
+        Func<Action<string>, CancellationToken, Task> download,
+        Func<bool, string, Task> updateFunc,
+        CancellationToken cancellationToken)
+    {
+        var progressTasks = new List<Task>();
+        var progressTaskLock = new object();
+        var previousProgressTask = Task.CompletedTask;
+
+        void OnProgress(string message)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            lock (progressTaskLock)
+            {
+                previousProgressTask = previousProgressTask.ContinueWith(
+                    async _ => await updateFunc.Invoke(false, message).ConfigureAwait(false),
+                    CancellationToken.None,
+                    TaskContinuationOptions.None,
+                    TaskScheduler.Default).Unwrap();
+                progressTasks.Add(previousProgressTask);
+            }
+        }
+
+        Exception? downloadException = null;
+        try
+        {
+            await download(OnProgress, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            downloadException = exception;
+        }
+
+        Task[] pendingProgressTasks;
+        lock (progressTaskLock)
+        {
+            pendingProgressTasks = progressTasks.ToArray();
+        }
+        try
+        {
+            await Task.WhenAll(pendingProgressTasks);
+        }
+        catch (Exception progressException) when (downloadException is not null)
+        {
+            throw new AggregateException(downloadException, progressException);
+        }
+
+        if (downloadException is not null)
+        {
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(downloadException).Throw();
+        }
     }
 
     /// <summary>
@@ -391,7 +439,7 @@ public class DownloadService
                 var read = await stream.ReadAsync(buf.AsMemory(0, 2), linkedToken);
 
                 // Server selection: VER=5, METHOD=0x00 — proxy is fully ready
-                if (read == 2 && buf[0] == 0x05)
+                if (IsSocks5NoAuthReply(buf, read))
                 {
                     return true;
                 }
@@ -425,4 +473,7 @@ public class DownloadService
         }
         return false;
     }
+
+    private static bool IsSocks5NoAuthReply(byte[] response, int length) =>
+        length == 2 && response[0] == 0x05 && response[1] == 0x00;
 }

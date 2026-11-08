@@ -48,12 +48,9 @@ public sealed class JsonConfigStorageProvider : IConfigStorageProvider
         {
             var root = await ReadConfigAsync(cancellationToken);
             var subscriptions = GetSubscriptionArray(root);
-            var matching = subscriptions
-                .OfType<JsonObject>()
-                .Where(item => string.Equals(
-                    item["id"]?.GetValue<string>(),
-                    subscription.Id,
-                    StringComparison.Ordinal))
+            var matching = ReadEntries(subscriptions)
+                .Where(entry => string.Equals(entry.Entry.Id, subscription.Id, StringComparison.Ordinal))
+                .Select(entry => entry.Node)
                 .ToArray();
 
             var node = matching.FirstOrDefault();
@@ -85,9 +82,9 @@ public sealed class JsonConfigStorageProvider : IConfigStorageProvider
         {
             var root = await ReadConfigAsync(cancellationToken);
             var subscriptions = GetSubscriptionArray(root);
-            var matches = subscriptions
-                .OfType<JsonObject>()
-                .Where(item => string.Equals(item["id"]?.GetValue<string>(), id, StringComparison.Ordinal))
+            var matches = ReadEntries(subscriptions)
+                .Where(entry => string.Equals(entry.Entry.Id, id, StringComparison.Ordinal))
+                .Select(entry => entry.Node)
                 .ToArray();
 
             if (matches.Length == 0)
@@ -165,6 +162,11 @@ public sealed class JsonConfigStorageProvider : IConfigStorageProvider
         root["subscriptions"] = subscriptions;
         return subscriptions;
     }
+
+    private static IEnumerable<(JsonObject Node, SubscriptionEntry Entry)> ReadEntries(JsonArray subscriptions) =>
+        subscriptions
+            .OfType<JsonObject>()
+            .Select((node, index) => (node, ReadEntry(node, index)));
 
     private static SubscriptionEntry ReadEntry(JsonObject node, int index)
     {

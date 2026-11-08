@@ -9,20 +9,25 @@ public sealed record GeoIpResult(string CountryCode, string CountryName, string 
 
 public sealed class GeoIpService : IDisposable
 {
+    public const string DefaultDatabaseRelativePath = "dat/GeoLite2-Country.mmdb";
+
     private readonly DatabaseReader _reader;
     private readonly ConcurrentDictionary<string, CacheEntry> _cache =
         new(StringComparer.OrdinalIgnoreCase);
 
     public GeoIpService(string? databasePath = null)
     {
-        databasePath ??= Path.Combine(AppContext.BaseDirectory, "dat", "GeoLite2-Country.mmdb");
+        databasePath ??= GetDefaultDatabasePath();
         if (!File.Exists(databasePath))
         {
-            throw new FileNotFoundException("The GeoLite2 Country database was not found.", databasePath);
+            throw new FileNotFoundException("The country MMDB was not found.", databasePath);
         }
 
         _reader = new DatabaseReader(databasePath);
     }
+
+    public static string GetDefaultDatabasePath() =>
+        Path.Combine(AppContext.BaseDirectory, "dat", "GeoLite2-Country.mmdb");
 
     public async Task<GeoIpResult?> LookupAsync(
         string hostOrAddress,
