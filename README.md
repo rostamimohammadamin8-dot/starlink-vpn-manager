@@ -97,14 +97,16 @@ dotnet build .\v2rayN\CustomExtensions\CustomExtensions.csproj -f net8.0-windows
 dotnet run --project .\v2rayN\CustomExtensions.Tests\CustomExtensions.Tests.csproj -c Release
 ```
 
-For a verified archive, place the Windows Xray files in `bin/Xray/`, sing-box files in `bin/sing_box/`, and a licensed, MaxMind-DB-compatible country MMDB at `dat/GeoLite2-Country.mmdb`, then run:
+Provision the pinned Windows core bundle and DB-IP Country Lite database, then build the verified archive:
 
 ```powershell
+.\Provision-PortableAssets.ps1
 .\Build-Portable.ps1
 tar -tf .\Output\v2rayN-Pro-Portable.zip
+Get-FileHash .\Output\v2rayN-Pro-Portable.zip -Algorithm SHA256
 ```
 
-The script runs the complete sidecar TUnit suite first, rejects tracked or untracked changes under the core `v2rayN/` projects, publishes a self-contained win-x64 WPF app, stages `v2rayN.exe`, `CustomExtensions.dll`, `sidecar-manifest.json`, both core runtimes and the country MMDB, then creates and validates `Output/v2rayN-Pro-Portable.zip`. It cleans only the repository-local `Output/` directory. These runtime binaries and the licensed database are not committed. The current local package uses DB-IP IP to Country Lite under CC BY 4.0 and adds its attribution in the archive; other data sources require their own licensing and attribution checks. The existing `Publish-Portable.bat` remains available for preparing a publish directory; it does not create the named ZIP archive. For tag builds, configure repository variables `XRAY_WINDOWS_ARCHIVE_URL`, `XRAY_WINDOWS_ARCHIVE_SHA256`, `SING_BOX_WINDOWS_ARCHIVE_URL`, and `SING_BOX_WINDOWS_ARCHIVE_SHA256` with GitHub HTTPS ZIP locations and their 64-digit SHA-256 digests; the separate release workflow's `MAXMIND_LICENSE_KEY` is for its licensed GeoLite2 download. The release workflow verifies archive hashes and fails with an explicit error when an asset is missing or invalid.
+`Provision-PortableAssets.ps1` verifies the core ZIP against its pinned Git blob ID and checks DB-IP's published SHA-1 before installing assets under the ignored `bin/` and `dat/` paths. The source pins should be updated deliberately when refreshing the core bundle or monthly DB-IP edition. `Build-Portable.ps1` runs the sidecar TUnit suites for .NET 8 and .NET 10, rejects tracked or untracked changes under the core `v2rayN/` projects, publishes a self-contained win-x64 WPF app, stages `v2rayN.exe`, `CustomExtensions.dll`, `sidecar-manifest.json`, both core runtimes and the country MMDB, then creates and validates `Output/v2rayN-Pro-Portable.zip`. It cleans only the repository-local `Output/` directory. These runtime binaries and the licensed database are not committed. The archive includes DB-IP IP to Country Lite attribution under CC BY 4.0. Tag releases run the same scripts automatically and attach both the ZIP and its SHA-256 checksum; no repository variables or database license key are required. The existing `Publish-Portable.bat` remains available for preparing a publish directory; it does not create the ZIP archive.
 
 The runtime uses upstream's existing portable data-directory selection and does not force elevation in the manifest. It may fall back to LocalAppData when the application directory is not writable; this extension does not override that upstream behavior. TUN setup may request administrator approval through the existing v2rayN mechanism; an unconditional `requireAdministrator` manifest would unnecessarily elevate every launch.
 
