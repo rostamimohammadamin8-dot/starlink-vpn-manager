@@ -17,7 +17,11 @@ function Set-Pin {
     if ($regex.Matches($Content).Count -ne 1) {
         throw "Expected exactly one pinned '$Name' value in Provision-PortableAssets.ps1."
     }
-    return $regex.Replace($Content, $Replacement, 1)
+    $evaluator = [System.Text.RegularExpressions.MatchEvaluator]{
+        param($match)
+        $Replacement
+    }.GetNewClosure()
+    return $regex.Replace($Content, $evaluator, 1)
 }
 
 $gitRoot = (& git -C $PSScriptRoot rev-parse --show-toplevel 2>$null)
