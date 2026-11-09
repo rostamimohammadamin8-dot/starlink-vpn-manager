@@ -29,4 +29,8 @@
         <PublishSingleFile>true</PublishSingleFile>
         <PublishReadyToRun>false</PublishReadyToRun>
     </PropertyGroup>
+
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'GlobalHotKeys'">
+        <NoWarn>$(NoWarn);CS8625</NoWarn>
+    </PropertyGroup>
 </Project>
