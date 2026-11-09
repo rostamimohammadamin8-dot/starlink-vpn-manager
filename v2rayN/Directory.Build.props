@@ -17,6 +17,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <DebugType>embedded</DebugType>
         <EventSourceSupport>false</EventSourceSupport>
         <StackTraceSupport>false</StackTraceSupport>

@@ -89,9 +89,10 @@ The storage abstraction provides a relative-path JSON provider for legacy `guiNC
 
 ### Build and portable Windows package
 
-Build the official solution with the .NET 10 SDK. The isolated extension project can also be built for .NET 8 Windows:
+Initialize the pinned `GlobalHotKeys` submodule before building locally. CI checkouts use recursive submodule initialization. Release builds treat warnings as errors; the known nullable warning in the read-only `GlobalHotKeys` project is suppressed narrowly from the parent `Directory.Build.props`, without changing the submodule source or commit.
 
 ```powershell
+git submodule update --init --recursive
 dotnet build .\v2rayN\v2rayN.sln -c Release
 dotnet build .\v2rayN\CustomExtensions\CustomExtensions.csproj -f net8.0-windows -c Release
 dotnet run --project .\v2rayN\CustomExtensions.Tests\CustomExtensions.Tests.csproj -c Release
