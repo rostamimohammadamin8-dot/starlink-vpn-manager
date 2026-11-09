@@ -1,128 +1,118 @@
-# Starlink VPN Manager
+# v2rayN
 
-<p align="center">
-  <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white">
-  <img alt="Windows 11" src="https://img.shields.io/badge/Windows-11-0078D4?logo=windows11&logoColor=white">
-  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
-  <a href="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/actions/workflows/dotnet.yml"><img alt="Build" src="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/actions/workflows/dotnet.yml/badge.svg?branch=main"></a>
-  <a href="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/actions/workflows/release.yml"><img alt="Automated Windows releases" src="https://img.shields.io/badge/releases-Windows%20x64-0078D4?logo=windows"></a>
-  <a href="https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/rostamimohammadamin8-dot/starlink-vpn-manager?style=flat"></a>
-</p>
+### A GUI client for Windows, Linux and macOS. Support [Xray](https://github.com/XTLS/Xray-core) and [sing-box](https://github.com/SagerNet/sing-box) and [others](https://github.com/2dust/v2rayN/wiki/List-of-supported-cores)
 
-A Windows desktop app for securely managing WireGuard profiles, monitoring network quality, and running sing-box tunnels with optional AI-service routing. The interface is currently Persian-language and built with WPF on .NET 8.
+[![CodeFactor](https://www.codefactor.io/repository/github/2dust/v2rayn/badge)](https://www.codefactor.io/repository/github/2dust/v2rayn)
+[![Release](https://img.shields.io/github/v/release/2dust/v2rayN?logo=github&label=Release)](https://github.com/2dust/v2rayN/releases)
+[![Downloads](https://img.shields.io/github/downloads/2dust/v2rayN/latest/total?logo=github&label=Downloads)](https://github.com/2dust/v2rayN/releases)
+[![Telegram](https://img.shields.io/badge/Telegram-Chat-26A5E4?logo=telegram)](https://t.me/v2rayn)
 
-## Dashboard Preview
+[![Windows](https://img.shields.io/badge/Windows-supported-0078D6?logo=windows)](https://github.com/2dust/v2rayN)
+[![Linux](https://img.shields.io/badge/Linux-supported-FCC624?logo=linux&logoColor=000)](https://github.com/2dust/v2rayN)
+[![macOS](https://img.shields.io/badge/macOS-supported-000000?logo=apple)](https://github.com/2dust/v2rayN)
+[![GPG Signed](https://img.shields.io/badge/GPG-signed-4B32C3?logo=gnuprivacyguard)](https://github.com/2dust/v2rayN)
 
-> **A visual tour is coming soon.** The screenshot slot below is ready for a dashboard capture; contributions of a current, redacted screenshot are welcome.
+
+---
+
+## Download / 下载
+
+Download the latest release here:
+
+在这里下载最新版本：
+
+[https://github.com/2dust/v2rayN/releases](https://github.com/2dust/v2rayN/releases)
+
+
+> [!TIP]
+> v2rayN is the desktop version. For the mobile version, please visit the v2rayNG \
+> v2rayN 是电脑版，手机版请访问 v2rayNG
 >
-> <a href="docs/images/dashboard.png"><img alt="Open the StarlinkVpnManager dashboard preview (screenshot placeholder)" src="https://img.shields.io/badge/preview-dashboard%20screenshot%20coming%20soon-172437?style=for-the-badge&logo=windows"></a>
->
-> [Open the dashboard preview image](docs/images/dashboard.png)
+> https://github.com/2dust/v2rayNG
 
-> **Project status:** WireGuard profile management, diagnostics, sing-box tunnel launch, AI bypass rules, and optional Windows Firewall kill switch are implemented. Starlink outage failover and per-application split tunneling are roadmap items, not current capabilities.
+---
 
-## Features
+## Documentation / 使用文档
 
-- **WireGuard profiles:** Import `.conf` files, install and manage Windows tunnel services, view peer handshake and transfer status, and remove profiles.
-- **Smart AI bypass:** Add sing-box route rules for OpenAI/ChatGPT, Anthropic/Claude, Google Gemini, Midjourney, and Hugging Face. Rules use a configured `direct` outbound and can also include caller-supplied IP CIDRs.
-- **sing-box tunnels:** Select a sing-box JSON configuration and start/stop `sing-box.exe`. The app writes a temporary merged runtime configuration under the current user's Local AppData; the selected source file is not overwritten.
-- **Network diagnostics:** Concurrent ICMP, TCP-handshake, and HTTP-response probes, endpoint DNS resolution, raw latency reporting, and a transport-probe success score.
-- **Optional kill switch:** With explicit confirmation and Windows administrator approval, block system-wide outbound traffic except traffic on the identified VPN interface and to the configured VPN server IPs. Existing outbound allow rules and firewall profile defaults are saved for restoration. The app refuses activation if it detects an enforced outbound allow policy it cannot safely contain.
-- **DPAPI profile security:** Imported WireGuard configurations are encrypted with Windows DPAPI for the current user. The app never displays private keys in diagnostics.
-- **Live connection log:** Process output, tunnel activity, latency measurements, and errors are shown in the dashboard.
+Read the Wiki for usage guides and configuration details.
 
-### Roadmap
+请阅读 Wiki 获取使用说明和配置教程。
 
-- **Starlink Outage Auto-Failover:** Detect a Starlink/WAN outage and transition to a configured backup connection.
-- **App-Based Split Tunneling:** Select applications whose traffic should use or bypass a tunnel.
+[https://github.com/2dust/v2rayN/wiki](https://github.com/2dust/v2rayN/wiki)
 
-These features are not currently implemented; no automatic WAN failover or per-application routing is performed.
+---
 
-## Feature Matrix
+## Supported Platforms / 支持平台
 
-| Capability | StarlinkVpnManager | Standard WireGuard Client |
-| --- | :---: | :---: |
-| WireGuard tunnel connect/disconnect | Yes | Yes |
-| AI service domain routing rules | Yes, through sing-box | No built-in AI routing UI |
-| TCP, HTTP, and ICMP latency diagnostics | Yes | No bundled diagnostics dashboard |
-| System-wide firewall kill switch with saved-policy rollback | Optional, administrator approval | Untunneled-traffic blocking is available per WireGuard tunnel; no matching manager workflow |
-| DPAPI encryption of imported profiles | Yes | WireGuard manages tunnel configurations; no matching DPAPI profile vault |
-| Peer handshake and transfer summaries | Yes, when `wg.exe` is available | Basic tunnel status |
-| Starlink outage auto-failover | Roadmap | No |
-| Per-application split tunneling | Roadmap | No |
+| Platform / 平台 | x64 | x86 | arm64 | riscv64 | loong64 |
+| --- | --- | --- | --- | --- | --- |
+| Windows | ✅ | ✅ | ✅ | - | - |
+| Linux | ✅ | - | ✅ | ✅ | ✅ |
+| macOS | ✅ | - | ✅ | - | - |
 
-AI routing currently applies only to sing-box configurations. The kill switch changes Windows Firewall policy system-wide and is off by default; read [Kill Switch Safety](#kill-switch-safety) before enabling it.
+Minimum OS requirements: [Release files introduction](https://github.com/2dust/v2rayN/wiki/Release-files-introduction) / 最低系统要求：[发布文件介绍](https://github.com/2dust/v2rayN/wiki/Release-files-introduction)
 
-## Quick Start
+---
 
-### Requirements
+## GPG Verification / GPG 签名校验
 
-- Windows 10 or 11
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) to build and run from source
-- [WireGuard for Windows](https://www.wireguard.com/install/) for WireGuard profile management
-- `sing-box.exe` beside the application or available on `PATH` to use sing-box profiles
+Release files are signed with GPG to verify authenticity and integrity, helping prevent mirror, ISP, or CDN hijacking.
 
-### Build and run
+发布文件已使用 GPG 签名，可用于校验文件真实性与完整性，预防镜像站、运营商或 CDN 劫持。
+
+### Fingerprint / 公钥指纹
+
+```text
+7694 5E9F 3E9A 168F 8070 F195 805D 661C
+134D FAF6 8903 C199 463C 31E5 AE90 3AE0
+```
+
+---
+
+## Community / 社区
+
+Telegram Group / Telegram 群组：
+
+[https://t.me/v2rayN](https://t.me/v2rayN)
+
+Telegram Channel / Telegram 频道：
+
+[https://t.me/github_2dust](https://t.me/github_2dust)
+
+---
+
+## Portable extension modules
+
+The Windows client includes a separate `v2rayN/CustomExtensions` project. It targets `net8.0-windows` and the upstream client's `net10.0-windows10.0.19041.0` framework; the official upstream source, protocol models, parsers, and UI XAML remain intact. The application startup has a small additive bootstrap that stores the Free Config Pack subscription through v2rayN's existing SQLite table and schedules its initial update in the background. Existing tray/close-to-tray behavior is retained.
+
+The storage abstraction provides a relative-path JSON provider for legacy `guiNConfig.json` layouts and a callback-backed SQLite provider. The current .NET 10 client maps SQLite operations to its existing `SubItem` and `SQLiteHelper` APIs; no second database or parallel subscription schema is introduced. `GeoIpService` reads a compatible country MMDB from `dat/GeoLite2-Country.mmdb`, caches IP/domain lookups, and returns ISO country names and flag emoji. The supplied portable build uses DB-IP IP to Country Lite (November 2026), not MaxMind GeoLite2; it is included under that runtime-compatible filename and attributed in `PORTABLE-README.txt` under CC BY 4.0. IP lookup itself is offline; resolving a hostname to an IP uses DNS. The RTT helper limits HTTP probes to 100 concurrent requests and marks failures or delays above 5 seconds offline. Its default probe measures direct reachability to Google’s HTTP 204 endpoint; callers must supply a per-profile probe URI to measure through a particular node. On the .NET 10 client, `ConnectToLowestLatencyProfileAsync` uses the native `ProfilesViewModel.SetDefaultServer` path to select and reload the winning profile.
+
+### Build and portable Windows package
+
+Initialize the pinned `GlobalHotKeys` submodule before building locally. CI checkouts use recursive submodule initialization. Release builds treat warnings as errors; the known nullable warning in the read-only `GlobalHotKeys` project is suppressed narrowly from the parent `Directory.Build.props`, without changing the submodule source or commit.
 
 ```powershell
-git clone https://github.com/rostamimohammadamin8-dot/starlink-vpn-manager.git
-cd starlink-vpn-manager
-dotnet build .\StarlinkVpnManager\StarlinkVpnManager.csproj
-dotnet run --project .\StarlinkVpnManager\StarlinkVpnManager.csproj
+git submodule update --init --recursive
+dotnet build .\v2rayN\v2rayN.sln -c Release
+dotnet build .\v2rayN\CustomExtensions\CustomExtensions.csproj -f net8.0-windows -c Release
+dotnet run --project .\v2rayN\CustomExtensions.Tests\CustomExtensions.Tests.csproj -c Release
 ```
 
-Import a WireGuard `.conf` profile, or select a sing-box JSON configuration from the dashboard. A valid VPN configuration and service credentials are not provided by this project.
-
-## Kill Switch Safety
-
-The kill switch is **off by default**. Enabling it changes the outbound policy for the Windows Domain, Private, and Public firewall profiles and requires an explicit confirmation followed by a UAC approval. To keep a full-tunnel VPN working, it permits outbound traffic on the detected WireGuard/sing-box tunnel interface and permits the resolved VPN server IP addresses for tunnel recovery. It disables existing locally managed outbound allow rules while active, then restores the saved firewall defaults and those rules when protection is switched off.
-
-If another enforced firewall policy still allows untrusted outbound traffic, activation is rejected and the prior local firewall configuration is restored. If the app or tunnel exits unexpectedly while protection is active, the block deliberately remains in place. Reopen the app and turn **Kill Switch Protection** off to restore the saved settings. Split-tunnel configurations may not work with the current interface-wide allow rule; the protection is designed for a recognized full-tunnel interface.
-
-If the app cannot be opened to restore the settings, run this recovery in **PowerShell as Administrator** for the same Windows user:
+Provision the pinned Windows core bundle and DB-IP Country Lite database, then build the verified archive:
 
 ```powershell
-$statePath = Join-Path $env:LOCALAPPDATA 'StarlinkVpnManager\kill-switch-state.json'
-$state = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
-foreach ($profile in @($state.Profiles)) {
-    Set-NetFirewallProfile -Profile $profile.Name -DefaultOutboundAction $profile.DefaultOutboundAction
-}
-foreach ($ruleName in @($state.EnabledOutboundRuleNames)) {
-    Enable-NetFirewallRule -Name $ruleName -ErrorAction SilentlyContinue
-}
-Remove-NetFirewallRule -Group 'StarlinkVpnManager Kill Switch' -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath $statePath -Force
+.\Provision-PortableAssets.ps1
+.\Build-Portable.ps1
+tar -tf .\Output\v2rayN-Pro-Portable.zip
+Get-FileHash .\Output\v2rayN-Pro-Portable.zip -Algorithm SHA256
 ```
 
-## Architecture
+`Provision-PortableAssets.ps1` verifies the core ZIP against its pinned Git blob ID and checks DB-IP's published SHA-1 before installing assets under the ignored `bin/` and `dat/` paths. The monthly `asset-refresh.yml` workflow verifies candidate upstream assets and opens a review-only PR for pin changes; it never auto-merges or publishes. `Build-Portable.ps1` runs the sidecar TUnit suites for .NET 8 and .NET 10, publishes the self-contained win-x64 WPF app, stages the app, sidecar, both core runtimes and country MMDB, then creates `Output/v2rayN-Pro-Portable.zip` and a machine-readable release manifest. `Verify-PortableRelease.ps1` checks the archive digest and the hashes of the packaged runtimes and database against that manifest. The build job has read-only repository permissions; the isolated tag-publish job alone receives release-write and OIDC permissions and produces GitHub build-provenance attestations for the ZIP, manifest, and checksum sidecar. These runtime binaries and the licensed database are not committed. The archive includes DB-IP IP to Country Lite attribution under CC BY 4.0. No repository variables or database license key are required. The existing `Publish-Portable.bat` remains available for preparing a publish directory; it does not create the ZIP archive.
 
-```mermaid
-flowchart LR
-    TRAFFIC[Starlink Traffic] --> ROUTE[AiRoutingService<br/>OpenAI / Claude / Gemini / Midjourney / Hugging Face]
-    ROUTE --> TUNNEL[WireGuard or sing-box Tunnel]
-    TUNNEL --> FIREWALL[KillSwitchService<br/>Windows Firewall Guard]
-    FIREWALL --> INTERNET[Internet]
-    UI[WPF dashboard] --> VM[MainWindowViewModel]
-    VM --> ROUTE
-    VM --> DIAG[NetworkDiagnosticsService]
-    DIAG --> PROBES[ICMP / TCP / HTTP / DNS]
-    VM --> VAULT[WireGuard ProfileStore / DPAPI]
-```
+The authenticated WebAPI endpoint `GET /api/diagnostics` returns a bounded ZIP containing allowlisted runtime metadata, capabilities, active operation categories, and recent sanitized log metadata. It does not serialize application settings, profile records, subscription records, or SQLite data. Log messages are included only when they exactly match a small static safe-message allowlist; every other message is omitted rather than relying on best-effort secret redaction. The failover policy engine is opt-in (disabled by default), persists its thresholds through `/api/settings/failover`, and exposes manual override controls. `ServiceLib.Services.ProfileFailoverCoordinator` accepts host-provided batched probe and profile-switch delegates and emits a route-switch event; the current clients do not yet provide an automatic probe/switch adapter, so enabling the setting alone does not initiate route changes.
 
-The WPF entry point is `StarlinkVpnManager/App.xaml`; the dashboard is in `StarlinkVpnManager/Views/`. Services and the view model live under `Services/` and `ViewModels/`. WireGuard profile metadata and encrypted configuration are stored under the current user's Local AppData.
+The runtime uses upstream's existing portable data-directory selection and does not force elevation in the manifest. It may fall back to LocalAppData when the application directory is not writable; this extension does not override that upstream behavior. TUN setup may request administrator approval through the existing v2rayN mechanism; an unconditional `requireAdministrator` manifest would unnecessarily elevate every launch.
 
-## Configuration Notes
+### Subscription-feed aggregation workflow
 
-- AI bypass rules are inserted before catch-all sing-box route rules and target the configured outbound tag (default: `direct`). The referenced outbound must exist in the selected configuration.
-- Domains are represented as `domain_suffix` values, so subdomains such as `api.openai.com` match their provider rule.
-- IP CIDRs can be supplied to `AiRoutingService`; no provider IP ranges are hard-coded because those ranges may change.
-- Network diagnostics do not change routes, MTU, firewall settings, or VPN configuration. The stability score is the percentage of the repeated TCP/HTTP probes that received a response; it is an indicator for those tested destinations, not a guarantee of end-to-end VPN health.
-- WireGuard source profiles are DPAPI-protected. A sing-box source configuration remains at its chosen location; when AI routing is enabled, the generated runtime copy can contain the same credentials and is kept in the current user's Local AppData until the tunnel stops.
-
-## Automated Releases
-
-Pushing a version tag matching `v*` (for example, `v1.0.0`) triggers the Windows x64 publish workflow. It creates a framework-dependent `StarlinkVpnManager-v1.0.0-win-x64.zip` GitHub Release asset. Install the .NET 8 Desktop Runtime on target PCs before launching the published app.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE). Copyright © 2026 Mohammad Amin Rostami.
+`.github/workflows/update-sub.yml` contains the six-hour aggregator intended for `rostamimohammadamin8-dot/Free-VPN-Config-Pack-2026`; it is guarded to run only in that repository. Copy the workflow into that repository's `.github/workflows/` directory and set its `VPN_SOURCE_URLS` Actions variable to newline-separated HTTPS feed URLs. It validates proxy URI schemes, deduplicates and Base64-encodes the nodes, and commits `sub.txt` only when the result changes.
