@@ -28,7 +28,7 @@ jobs:
       target: macos
       release_tag: ${{ inputs.release_tag }}
     secrets: inherit
-    
+
   dmg:
     name: package and release macOS dmg
     if: inputs.release_tag != ''
@@ -43,8 +43,8 @@ jobs:
           case(
             matrix.arch == 'x64', '64',
             matrix.arch
-          ) 
-        }} 
+          )
+        }}
     steps:
     - name: Checkout
       uses: actions/checkout@v7
@@ -54,7 +54,7 @@ jobs:
       with:
         name: ${{ matrix.arch }}
         path: v2rayN-macos-${{ env.Arch }}
-    
+
     - name: Setup create-dmg
       run: brew install create-dmg
 

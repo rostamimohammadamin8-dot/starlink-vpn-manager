@@ -112,7 +112,7 @@ install_dependencies() {
 
     export PATH="$HOME/.dotnet:$PATH"
     export DOTNET_ROOT="$HOME/.dotnet"
-    
+
     dotnet --info >/dev/null 2>&1 || install_ok=0
   fi
 

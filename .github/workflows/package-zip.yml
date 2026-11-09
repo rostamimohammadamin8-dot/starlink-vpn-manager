@@ -25,7 +25,7 @@ jobs:
         arch: [ x64, arm64 ]
     runs-on: ubuntu-latest
     env:
-      Target: |- 
+      Target: |-
         ${{
           case(
             inputs.target == 'windows-desktop', 'windows',
@@ -37,7 +37,7 @@ jobs:
           case(
             matrix.arch == 'x64', '64',
             matrix.arch
-          ) 
+          )
         }}
     steps:
     - name: Checkout
@@ -48,17 +48,17 @@ jobs:
       with:
         name: ${{ matrix.arch }}
         path: v2rayN-${{ env.Target }}-${{ env.Arch }}
-    
+
     - name: Get v2rayN-core-bin
       run: wget -nv -O v2rayN-$Target-$Arch.zip "https://github.com/2dust/v2rayN-core-bin/raw/refs/heads/master/v2rayN-$Target-$Arch.zip"
-    
+
     - name: Package zip archive
       run: 7z a -tZip v2rayN-$Target-$Arch.zip v2rayN-$Target-$Arch -mx1
 
-    - name: Rename windows-desktop 
+    - name: Rename windows-desktop
       if: inputs.target == 'windows-desktop'
       run: mv "v2rayN-$Target-$Arch.zip" "v2rayN-$Target-$Arch-desktop.zip"
-    
+
     - name: Upload zip artifact
       uses: actions/upload-artifact@v7
       with:

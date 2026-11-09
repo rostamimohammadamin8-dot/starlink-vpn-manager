@@ -5,28 +5,28 @@ name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     defaults:
       run:
-        working-directory: ./StarlinkVpnManager
+        working-directory: ./v2rayN
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Restore dependencies
+        run: dotnet restore v2rayN.sln
+      - name: Build
+        run: dotnet build v2rayN.sln --configuration Release --no-restore --nologo
+      - name: Test
+        run: dotnet test --solution v2rayN.sln --configuration Release --no-build --verbosity normal --nologo

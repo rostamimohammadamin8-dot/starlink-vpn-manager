@@ -113,7 +113,20 @@ public class DownloadServiceHeadersTests
             var cancellationToken = _cancellation.Token;
             while (!cancellationToken.IsCancellationRequested)
             {
-                using var client = await _listener.AcceptTcpClientAsync(cancellationToken);
+                TcpClient client;
+                try
+                {
+                    client = await _listener.AcceptTcpClientAsync(cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (ObjectDisposedException)
+                {
+                    break;
+                }
+
                 await using var stream = client.GetStream();
                 using var reader = new StreamReader(stream, Encoding.ASCII, leaveOpen: true);
                 var requestLine = await reader.ReadLineAsync(cancellationToken);
@@ -135,7 +148,14 @@ public class DownloadServiceHeadersTests
                 var status = _failFirstRequest && Requests.Count == 1 ? "503 Service Unavailable" : "200 OK";
                 var body = requestLine.StartsWith("HEAD ") ? "" : Body;
                 var response = $"HTTP/1.1 {status}\r\nContent-Length: {Body.Length}\r\nConnection: close\r\n\r\n{body}";
-                await stream.WriteAsync(Encoding.ASCII.GetBytes(response), cancellationToken);
+                try
+                {
+                    await stream.WriteAsync(Encoding.ASCII.GetBytes(response), cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
             }
         }
 

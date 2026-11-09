@@ -2,7 +2,7 @@ name: Feature 请求
 description: "为这个项目提出一个建议"
 title: "[Feature request]: "
 labels: ['enhancement']
-body: 
+body:
 - type: input
   id: problem
   attributes:

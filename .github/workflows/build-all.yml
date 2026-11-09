@@ -7,7 +7,7 @@ on:
         required: false
         type: string
 
-permissions: 
+permissions:
   actions: write
   contents: write
 
@@ -86,7 +86,7 @@ jobs:
                 \"release_tag\": \"${{ inputs.release_tag }}\"
               }
             }"
-            
+
       - name: Trigger build windows x86
         if: inputs.release_tag != ''
         run: |

@@ -57,14 +57,14 @@ jobs:
       run: |
         echo "Before:"
         dotnet --list-sdks
-        
+
         dotnet --list-sdks | % {
           $_ -match '^\S+\s+\[(.+)\]$' > $null
           $d = Join-Path $Matches[1] $_.Split()[0]
           Write-Host "Removing $d"
           if ($IsWindows) { rm $d -r -fo } else { sudo rm -rf "$d" }
         }
-        
+
         echo "After:"
         dotnet --list-sdks 2>$null; $LASTEXITCODE=0
 
@@ -72,7 +72,7 @@ jobs:
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.1xx
-        
+
     - name: Build v2rayN
       shell: bash
       working-directory: ./v2rayN

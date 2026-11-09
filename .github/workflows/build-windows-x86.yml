@@ -40,7 +40,7 @@ jobs:
         run: |
           echo "Before:"
           dotnet --list-sdks
-          
+
           dotnet --list-sdks | % {
             $_ -match '^\S+\s+\[(.+)\]$' > $null
             $d = Join-Path $Matches[1] $_.Split()[0]
