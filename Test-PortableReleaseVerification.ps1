@@ -2,6 +2,7 @@ $ErrorActionPreference = 'Stop'
 $testRoot = Join-Path $env:TEMP ('portable-release-verification-' + [guid]::NewGuid().ToString('N'))
 $stage = Join-Path $testRoot 'stage'
 $archivePath = Join-Path $testRoot 'v2rayN-Pro-Portable.zip'
+$checksumPath = "$archivePath.sha256"
 $manifestPath = Join-Path $testRoot 'release-manifest.json'
 $verifierPath = Join-Path $PSScriptRoot 'Verify-PortableRelease.ps1'
 
@@ -44,20 +45,28 @@ try {
         }
     }
     $metadata | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $manifestPath -Encoding utf8
+    $archiveHash = (Get-FileHash $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+    [IO.File]::WriteAllText($checksumPath, "$archiveHash  $([IO.Path]::GetFileName($archivePath))`n", [Text.Encoding]::ASCII)
 
-    & $verifierPath -ArchivePath $archivePath -ManifestPath $manifestPath
+    & $verifierPath -ArchivePath $archivePath -ManifestPath $manifestPath -ChecksumPath $checksumPath
+
+    [IO.File]::WriteAllText($checksumPath, ('f' * 64) + "  $([IO.Path]::GetFileName($archivePath))`n", [Text.Encoding]::ASCII)
+    Assert-Throws {
+        & $verifierPath -ArchivePath $archivePath -ManifestPath $manifestPath -ChecksumPath $checksumPath
+    } 'Tampered checksum sidecar passed verification.'
+    [IO.File]::WriteAllText($checksumPath, "$archiveHash  $([IO.Path]::GetFileName($archivePath))`n", [Text.Encoding]::ASCII)
 
     $metadata.archive.sha256 = 'f' * 64
     $metadata | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $manifestPath -Encoding utf8
     Assert-Throws {
-        & $verifierPath -ArchivePath $archivePath -ManifestPath $manifestPath
+        & $verifierPath -ArchivePath $archivePath -ManifestPath $manifestPath -ChecksumPath $checksumPath
     } 'Tampered manifest passed verification.'
 
     $metadata.archive.sha256 = (Get-FileHash $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
     $metadata | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $manifestPath -Encoding utf8
     [IO.File]::AppendAllText($archivePath, 'tamper')
     Assert-Throws {
-        & $verifierPath -ArchivePath $archivePath -ManifestPath $manifestPath
+        & $verifierPath -ArchivePath $archivePath -ManifestPath $manifestPath -ChecksumPath $checksumPath
     } 'Tampered archive passed verification.'
 
     Write-Output 'Portable release verification tests passed.'

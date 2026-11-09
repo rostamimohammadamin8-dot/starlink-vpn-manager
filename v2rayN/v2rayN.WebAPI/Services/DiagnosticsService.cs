@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using v2rayN.WebAPI.Contracts;
@@ -15,6 +14,18 @@ public sealed class DiagnosticsService
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         WriteIndented = true,
+    };
+    private static readonly HashSet<string> AllowedLogSources = new(StringComparer.Ordinal)
+    {
+        "backup", "core", "core-validation", "failover", "profile", "restore", "settings",
+        "speedtest", "subscription", "task", "update", "web",
+    };
+    private static readonly Dictionary<string, string> SafeMessages = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Core started"] = "Core started.",
+        ["Core stopped"] = "Core stopped.",
+        ["serviceLib.initialized"] = "Service initialized.",
+        ["serviceLib.stopped"] = "Service stopped.",
     };
     private static readonly Regex SecretAssignment = new(
         @"(?i)\b(password|passwd|pass|token|secret|api[-_]?key|authorization)\s*[:=]\s*(?:Bearer\s+)?(?:""[^""]*""|'[^']*'|[^\s,;]+)",
@@ -73,7 +84,7 @@ public sealed class DiagnosticsService
 
     private static string[] NormalizeCapabilities(IEnumerable<string>? capabilities) =>
         capabilities?
-            .Where(value => Regex.IsMatch(value, "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$", RegexOptions.CultureInvariant))
+            .Where(value => WebApiCapabilities.Current.Contains(value, StringComparer.Ordinal))
             .Distinct(StringComparer.Ordinal)
             .Order(StringComparer.Ordinal)
             .ToArray()
@@ -96,10 +107,10 @@ public sealed class DiagnosticsService
 
     private static DiagnosticsLogEntry SanitizeLog(LogView log)
     {
-        var source = Regex.IsMatch(log.Source, "^[a-zA-Z][a-zA-Z0-9-]{0,31}$", RegexOptions.CultureInvariant)
-            ? log.Source
-            : "other";
-        var message = log.Message;
+        var source = AllowedLogSources.Contains(log.Source) ? log.Source : "other";
+        var message = SafeMessages.TryGetValue(log.Message, out var safeMessage)
+            ? safeMessage
+            : "Log detail omitted by privacy policy.";
         message = Url.Replace(message, "[URL REDACTED]");
         message = SecretAssignment.Replace(message, "$1=[REDACTED]");
         message = BearerCredential.Replace(message, "Bearer [REDACTED]");

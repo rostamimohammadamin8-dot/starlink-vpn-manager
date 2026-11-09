@@ -4,13 +4,17 @@ param(
     [string]$ArchivePath,
 
     [Parameter(Mandatory)]
-    [string]$ManifestPath
+    [string]$ManifestPath,
+
+    [Parameter(Mandatory)]
+    [string]$ChecksumPath
 )
 
 $ErrorActionPreference = 'Stop'
 $ArchivePath = [IO.Path]::GetFullPath($ArchivePath)
 $ManifestPath = [IO.Path]::GetFullPath($ManifestPath)
-foreach ($path in @($ArchivePath, $ManifestPath)) {
+$ChecksumPath = [IO.Path]::GetFullPath($ChecksumPath)
+foreach ($path in @($ArchivePath, $ManifestPath, $ChecksumPath)) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         throw "Required release file does not exist: $path"
     }
@@ -30,6 +34,11 @@ if ($manifest.archive.file -ne [IO.Path]::GetFileName($ArchivePath)) {
 $archiveHash = (Get-FileHash -LiteralPath $ArchivePath -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($manifest.archive.sha256 -notmatch '^[0-9a-f]{64}$' -or $archiveHash -ne $manifest.archive.sha256) {
     throw 'The portable archive SHA-256 does not match the release manifest.'
+}
+$checksumContent = [IO.File]::ReadAllText($ChecksumPath).TrimEnd("`r", "`n")
+$expectedChecksum = "$archiveHash  $([IO.Path]::GetFileName($ArchivePath))"
+if ($checksumContent -cne $expectedChecksum) {
+    throw 'The SHA-256 sidecar does not match the portable archive.'
 }
 if (-not $manifest.coreBundle -or -not $manifest.geoIp) {
     throw 'A distributable release manifest must identify the pinned core bundle and Geo-IP database.'

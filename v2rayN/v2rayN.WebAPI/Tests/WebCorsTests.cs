@@ -100,6 +100,16 @@ public class WebCorsTests
     }
 
     [Test]
+    public async Task DiagnosticsExportRequiresAnAuthenticatedSession()
+    {
+        await using var api = await Harness.StartAsync(Origin);
+        using var request = Request(HttpMethod.Get, "/api/diagnostics", Origin);
+        using var response = await api.Client.SendAsync(request);
+
+        await (response.StatusCode == HttpStatusCode.Unauthorized).Should().BeTrue();
+    }
+
+    [Test]
     public async Task TicketAndRealSseEndpointWorkAcrossOriginAndTicketCannotBeConsumedByDeniedOrigin()
     {
         await using var api = await Harness.StartAsync(Origin);

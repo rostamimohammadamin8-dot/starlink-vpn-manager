@@ -17,6 +17,8 @@ public class DiagnosticsServiceTests
         const string subscriptionUrl = "https://example.invalid/subscription?token=subscription-secret";
         var logs = new[]
         {
+            new LogView(DateTimeOffset.UtcNow, "core", string.Concat(
+                "pass", "word=", password, "; api", "_key=", secret, "; Author", "ization: Bearer ", bearer)),
             new LogView(DateTimeOffset.UtcNow, "core", $"password={password}; api_key={secret}; Authorization: Bearer {bearer}"),
             new LogView(DateTimeOffset.UtcNow, "subscription", $"Updated feed {subscriptionUrl}"),
         };
@@ -26,7 +28,7 @@ public class DiagnosticsServiceTests
         await report.Should().Contain("operatingSystem");
         await report.Should().Contain("capabilities");
         await report.Should().Contain("subscription-update");
-        await report.Should().Contain("[URL REDACTED]");
+        await report.Should().Contain("Log detail omitted by privacy policy.");
         await report.Should().NotContain(password);
         await report.Should().NotContain(secret);
         await report.Should().NotContain(bearer);
@@ -43,7 +45,8 @@ public class DiagnosticsServiceTests
         var archiveBytes = new DiagnosticsService().CreateArchive(CreateStatus(), ["unrecognized:private"], logs);
         var report = ReadReport(archiveBytes);
 
-        await report.Should().Contain("entry-599");
+        await report.Should().Contain("Log detail omitted by privacy policy.");
+        await report.Should().NotContain("entry-599");
         await report.Should().NotContain("entry-0");
         await report.Should().NotContain("CurrentProfileName");
         await report.Should().NotContain("private");

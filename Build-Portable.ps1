@@ -10,6 +10,7 @@ $repositoryRoot = $PSScriptRoot
 $outputDirectory = Join-Path $repositoryRoot 'Output'
 $stageDirectory = Join-Path $outputDirectory '_stage'
 $archivePath = Join-Path $outputDirectory 'v2rayN-Pro-Portable.zip'
+$checksumPath = "$archivePath.sha256"
 $manifestPath = Join-Path $outputDirectory 'release-manifest.json'
 $testProject = Join-Path $repositoryRoot 'v2rayN\CustomExtensions.Tests\CustomExtensions.Tests.csproj'
 $hostProject = Join-Path $repositoryRoot 'v2rayN\v2rayN\v2rayN.csproj'
@@ -349,7 +350,13 @@ $manifest = [ordered]@{
 }
 $manifest | ConvertTo-Json -Depth 12 |
     Set-Content -LiteralPath $manifestPath -Encoding utf8
+$archiveHash = $manifest.archive.sha256
+[IO.File]::WriteAllText(
+    $checksumPath,
+    "$archiveHash  $([IO.Path]::GetFileName($archivePath))`n",
+    [Text.Encoding]::ASCII)
 
 Assert-CoreSourcesUnchanged
 Write-Output "Portable archive created and verified: $archivePath"
 Write-Output "Release manifest created: $manifestPath"
+Write-Output "SHA-256 checksum created: $checksumPath"

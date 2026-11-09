@@ -31,14 +31,7 @@ jobs:
         shell: pwsh
         run: |
           .\Build-Portable.ps1
-          .\Verify-PortableRelease.ps1 -ArchivePath .\Output\v2rayN-Pro-Portable.zip -ManifestPath .\Output\release-manifest.json
-
-      - name: Generate SHA-256 checksum
-        shell: pwsh
-        run: |
-          $archive = 'Output/v2rayN-Pro-Portable.zip'
-          $checksum = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
-          [IO.File]::WriteAllText("$archive.sha256", "$checksum  v2rayN-Pro-Portable.zip`n", [Text.Encoding]::ASCII)
+          .\Verify-PortableRelease.ps1 -ArchivePath .\Output\v2rayN-Pro-Portable.zip -ManifestPath .\Output\release-manifest.json -ChecksumPath .\Output\v2rayN-Pro-Portable.zip.sha256
 
       - name: Upload verified release files
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
